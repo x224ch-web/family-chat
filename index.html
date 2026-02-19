@@ -144,16 +144,15 @@ onChildAdded(messagesRef, (data) => {
   document.getElementById("messages").scrollTop = 99999;
 });
   
-  function sendMessage() {
-  const name = document.getElementById("name").value;
-  const message = document.getElementById("message").value;
+window.sendMessage = function() {
+  const name = document.getElementById("name").value.trim();
+  const message = document.getElementById("message").value.trim();
 
-  if (name === "" || message === "") return;
+  if (!name || !message) return;
 
-  const newMessageRef = database.ref("messages").push();
-  newMessageRef.set({
-    name: name,
-    message: message,
+  push(messagesRef, {
+    name,
+    text: message,
     timestamp: Date.now()
   });
 
