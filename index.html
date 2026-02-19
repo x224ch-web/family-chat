@@ -145,6 +145,9 @@ onChildAdded(messagesRef, (data) => {
 });
   
 window.sendMessage = function() {
+  document.getElementById("sendBtn")
+  .addEventListener("click", window.sendMessage);
+
   const name = document.getElementById("name").value.trim();
   const message = document.getElementById("message").value.trim();
 
