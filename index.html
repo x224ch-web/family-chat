@@ -145,9 +145,6 @@ onChildAdded(messagesRef, (data) => {
 });
   
 window.sendMessage = function() {
-  document.getElementById("sendBtn")
-  .addEventListener("click", window.sendMessage);
-
   const name = document.getElementById("name").value.trim();
   const message = document.getElementById("message").value.trim();
 
@@ -160,7 +157,21 @@ window.sendMessage = function() {
   });
 
   document.getElementById("message").value = "";
-}
+};
+document.addEventListener("DOMContentLoaded", () => {
+  document
+    .getElementById("sendBtn")
+    .addEventListener("click", window.sendMessage);
+
+  document
+    .getElementById("message")
+    .addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        window.sendMessage();
+      }
+    });
+});
+
 
 </script>
 
