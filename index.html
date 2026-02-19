@@ -138,13 +138,22 @@ window.sendMessage = function() {
   document.getElementById("message").value = "";
 }
 
-onChildAdded(messagesRef, (data) => {
-  const msg = data.val();
-  const div = document.createElement("div");
+onChildAdded(messagesRef, (snapshot) => {
+  const data = snapshot.val();
 
-  const myName = document.getElementById("name").value;
-  div.className = "message " + (msg.name === myName ? "me" : "other");
-  div.textContent = msg.name + " : " + msg.text;
+  const div = document.createElement("div");
+  div.classList.add("message");
+
+  // 今入力している自分の名前を取得
+  const myName = document.getElementById("name").value.trim();
+
+  if (data.name === myName) {
+    div.classList.add("my-message");
+  } else {
+    div.classList.add("other-message");
+  }
+
+  div.textContent = data.name + " : " + data.text;
 
   document.getElementById("messages").appendChild(div);
   document.getElementById("messages").scrollTop = 99999;
