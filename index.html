@@ -212,28 +212,32 @@
     }
 
     /* 名前リセットボタン */
-    #resetNameBtn {
-      background: #e74c3c;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      padding: 6px 12px;
-      margin: 8px;
-      cursor: pointer;
-      font-size: 13px;
-      align-self: flex-end;
-    }
+   .reset-btn {
+  background: transparent;
+  border: 2px solid var(--main-color);
+  color: var(--main-color);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-left: 10px;
+}
 
-    #resetNameBtn:hover {
-      background: #c0392b;
-    }
+.reset-btn:hover {
+  background: var(--main-color);
+  color: white;
+  transform: translateY(-1px);
+}
   </style>
 </head>
 
 <body>
   <div class="chat-container">
     <div class="header">MHRSS Chat</div>
-    <button id="resetNameBtn">名前リセット</button>
+    <button id="resetNameBtn" class="reset-btn">
+  ⟳ 名前リセット
+</button>
 
     <div id="messages" class="messages"></div>
 
