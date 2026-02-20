@@ -111,22 +111,36 @@
     });
     
 
-if (myName) {
-  document.getElementById("name").value = myName;
+// ===== 名前エリアの切り替え =====
+
+const nameEditArea = document.getElementById("nameEditArea");
+const nameDisplayArea = document.getElementById("nameDisplayArea");
+const currentNameSpan = document.getElementById("currentName");
+
+let savedChatName = localStorage.getItem("chatName");
+
+if (savedChatName) {
+  myName = savedChatName;
+  currentNameSpan.textContent = myName;
+  nameEditArea.style.display = "none";
+  nameDisplayArea.style.display = "flex";
 }
 
-document.getElementById("saveNameBtn").addEventListener("click", function () {
+document.getElementById("saveNameBtn").addEventListener("click", () => {
   const input = document.getElementById("name").value.trim();
   if (!input) return;
 
   myName = input;
   localStorage.setItem("chatName", myName);
-  alert("名前を保存しました");
+
+  currentNameSpan.textContent = myName;
+  nameEditArea.style.display = "none";
+  nameDisplayArea.style.display = "flex";
 });
 
-document.getElementById("resetNameBtn").addEventListener("click", function () {
-  localStorage.removeItem("chatName");
-  location.reload();
+document.getElementById("changeNameBtn").addEventListener("click", () => {
+  nameDisplayArea.style.display = "none";
+  nameEditArea.style.display = "flex";
 });
   </script>
 
@@ -292,10 +306,21 @@ document.getElementById("resetNameBtn").addEventListener("click", function () {
 
     <!-- 🟢 名前エリア（上部に移動） -->
     <div class="name-area">
-      <input type="text" id="name" placeholder="名前を入力">
-      <button id="saveNameBtn">確定</button>
-      <button id="resetNameBtn" class="reset-btn">⟳</button>
-    </div>
+
+  <!-- 編集モード -->
+  <div id="nameEditArea">
+    <input type="text" id="name" placeholder="名前を入力">
+    <button id="saveNameBtn">確定</button>
+    <button id="resetNameBtn" class="reset-btn">⟳</button>
+  </div>
+
+  <!-- 表示モード -->
+  <div id="nameDisplayArea" style="display:none;">
+    👤 <span id="currentName"></span>
+    <button id="changeNameBtn" class="reset-btn">変更</button>
+  </div>
+
+</div>
 
     <!-- 🟢 メッセージ表示 -->
     <div id="messages" class="messages"></div>
