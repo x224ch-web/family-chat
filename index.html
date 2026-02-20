@@ -106,6 +106,10 @@
 
   <!-- 🔹 CSS LINE風UI + ヘッダー -->
   <style>
+    :root {
+      --main-color: #06c755;
+    }
+    
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -120,7 +124,7 @@
 
     /* ヘッダー */
     .header {
-      background: #5a67d8;
+      background: var(--main-color);
       color: white;
       text-align: center;
       padding: 12px;
@@ -150,7 +154,7 @@
     }
 
     .me {
-      background: #5a67d8;
+      background: var(--main-color);
       color: white;
       align-self: flex-end;
       border-top-right-radius: 0;
