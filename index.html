@@ -28,6 +28,7 @@
     // 🔹 自分の名前を固定
     let myName = "";
 
+    // 🔹 メッセージ送信
     window.sendMessage = function() {
       const nameInput = document.getElementById("name");
       const messageInput = document.getElementById("message");
@@ -36,11 +37,9 @@
       const message = messageInput.value.trim();
       if (!name || !message) return;
 
-      // 名前を固定
       myName = name;
       localStorage.setItem("myName", myName);
 
-      // Firebaseに送信
       push(messagesRef, {
         name,
         text: message,
@@ -58,34 +57,29 @@
         document.getElementById("name").value = savedName;
       }
 
-      // ボタンとEnterキーで送信
-      document.getElementById("sendBtn")
-              .addEventListener("click", window.sendMessage);
+      // 送信ボタン・Enterキー送信
+      document.getElementById("sendBtn").addEventListener("click", window.sendMessage);
+      document.getElementById("message").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") window.sendMessage();
+      });
 
-      document.getElementById("message")
-              .addEventListener("keydown", (e) => {
-                if (e.key === "Enter") window.sendMessage();
-              });
-
-      // 🔔 着信音オブジェクト
+      // 🔔 着信音
       const sound = document.getElementById("notificationSound");
 
-      // Realtime Database の新しいメッセージ取得
+      // 🔹 メッセージ表示
       onChildAdded(messagesRef, (snapshot) => {
         const data = snapshot.val();
         const div = document.createElement("div");
         div.classList.add("message");
 
         if (data.name === myName) {
-          div.classList.add("me"); // 右側
+          div.classList.add("me"); // 自分のメッセージ右
         } else {
-          div.classList.add("other"); // 左側
-          // 相手のメッセージだけ音を鳴らす
+          div.classList.add("other"); // 相手左
           sound.currentTime = 0;
-          sound.play().catch(()=>{}); // iOSや初回タップなしでも安全
+          sound.play().catch(()=>{});
         }
 
-        // 時刻表示
         const date = new Date(data.timestamp);
         const time = date.getHours().toString().padStart(2,"0") + ":" +
                      date.getMinutes().toString().padStart(2,"0");
@@ -98,6 +92,14 @@
 
         document.getElementById("messages").appendChild(div);
         document.getElementById("messages").scrollTop = 99999;
+      });
+
+      // 🔹 名前リセットボタン
+      document.getElementById("resetNameBtn").addEventListener("click", () => {
+        localStorage.removeItem("myName");
+        myName = "";
+        document.getElementById("name").value = "";
+        alert("名前がリセットされました。新しい名前を入力してください。");
       });
     });
   </script>
@@ -116,7 +118,7 @@
       height: 100vh;
     }
 
-    /* 🔹 ヘッダー */
+    /* ヘッダー */
     .header {
       background: #5a67d8;
       color: white;
@@ -198,12 +200,31 @@
       font-size: 18px;
       cursor: pointer;
     }
+
+    /* 名前リセットボタン */
+    #resetNameBtn {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 6px 12px;
+      margin: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      align-self: flex-end;
+    }
+
+    #resetNameBtn:hover {
+      background: #c0392b;
+    }
   </style>
 </head>
 
 <body>
   <div class="chat-container">
-    <div class="header">MHRSS Chat</div> <!-- 🔹 ヘッダータイトル -->
+    <div class="header">MHRSS Chat</div>
+    <button id="resetNameBtn">名前リセット</button>
+
     <div id="messages" class="messages"></div>
 
     <div class="input-area">
