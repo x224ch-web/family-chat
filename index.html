@@ -102,6 +102,25 @@
         alert("名前がリセットされました。新しい名前を入力してください。");
       });
     });
+    let myName = localStorage.getItem("chatName") || "";
+
+if (myName) {
+  document.getElementById("name").value = myName;
+}
+
+document.getElementById("saveNameBtn").addEventListener("click", function () {
+  const input = document.getElementById("name").value.trim();
+  if (!input) return;
+
+  myName = input;
+  localStorage.setItem("chatName", myName);
+  alert("名前を保存しました");
+});
+
+document.getElementById("resetNameBtn").addEventListener("click", function () {
+  localStorage.removeItem("chatName");
+  location.reload();
+});
   </script>
 
   <!-- 🔹 CSS LINE風UI + ヘッダー -->
