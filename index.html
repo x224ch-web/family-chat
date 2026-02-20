@@ -234,18 +234,25 @@
 
 <body>
   <div class="chat-container">
-    <div class="header">MHRSS Chat</div>
-    <button id="resetNameBtn" class="reset-btn">
-  ⟳ 名前リセット
-</button>
 
+    <div class="header">MHRSS Chat</div>
+
+    <!-- 🟢 名前エリア（上部に移動） -->
+    <div class="name-area">
+      <input type="text" id="name" placeholder="名前を入力">
+      <button id="saveNameBtn">確定</button>
+      <button id="resetNameBtn" class="reset-btn">⟳</button>
+    </div>
+
+    <!-- 🟢 メッセージ表示 -->
     <div id="messages" class="messages"></div>
 
+    <!-- 🟢 メッセージ送信エリア -->
     <div class="input-area">
-      <input type="text" id="name" placeholder="名前">
       <input type="text" id="message" placeholder="メッセージ">
       <button id="sendBtn">➤</button>
     </div>
+
   </div>
 
   <!-- 🔔 着信音 -->
