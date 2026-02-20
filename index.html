@@ -248,6 +248,33 @@ document.getElementById("resetNameBtn").addEventListener("click", function () {
   color: white;
   transform: translateY(-1px);
 }
+    /* 名前エリア全体 */
+.name-area {
+  padding: 10px;
+  background: white;
+  border-bottom: 1px solid #eee;
+}
+
+/* 名前入力モード */
+#nameEditArea {
+  display: flex;
+  gap: 8px;
+}
+
+#nameEditArea input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+}
+
+/* 確定後の表示モード */
+#nameDisplayArea {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+}
   </style>
 </head>
 
