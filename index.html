@@ -49,13 +49,6 @@
       messageInput.value = "";
     };
 
-    document.addEventListener("DOMContentLoaded", () => {
-      // 保存済みの名前を復元
-      const savedName = localStorage.getItem("myName");
-      if (savedName) {
-        myName = savedName;
-        document.getElementById("name").value = savedName;
-      }
 
       // 送信ボタン・Enterキー送信
       document.getElementById("sendBtn").addEventListener("click", window.sendMessage);
@@ -157,7 +150,6 @@ document.getElementById("changeNameBtn").addEventListener("click", () => {
   nameDisplayArea.style.display = "none";
   nameEditArea.style.display = "flex";
 });
-    const FAMILY_CODE = "2244"; // 好きな番号に変更OK
 
 let myName = "";
 
@@ -183,11 +175,7 @@ document.getElementById("loginBtn").addEventListener("click", () => {
   document.getElementById("loginScreen").style.display = "none";
 });
 
-// 自動ログイン
-if (localStorage.getItem("familyLogin") === "ok") {
-  myName = localStorage.getItem("chatName");
-  document.getElementById("loginScreen").style.display = "none";
-}
+
   </script>
 
   <!-- 🔹 CSS LINE風UI + ヘッダー -->
