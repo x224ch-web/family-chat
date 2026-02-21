@@ -63,6 +63,21 @@
         if (e.key === "Enter") window.sendMessage();
       });
 
+      const typingRef = ref(database, "typing");
+
+let typingTimeout;
+
+document.getElementById("message").addEventListener("input", () => {
+  if (!myName) return;
+
+  set(ref(database, "typing/" + myName), true);
+
+  clearTimeout(typingTimeout);
+
+  typingTimeout = setTimeout(() => {
+    remove(ref(database, "typing/" + myName));
+  }, 2000);
+});
       // 🔔 着信音
       const sound = document.getElementById("notificationSound");
 
