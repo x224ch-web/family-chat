@@ -25,9 +25,7 @@
     const database = getDatabase(app);
     const messagesRef = ref(database, "messages");
 
-    // 🔹 自分の名前を固定
-    let myName = "";
-
+  
     // 🔹 メッセージ送信
     window.sendMessage = function() {
       const nameInput = document.getElementById("name");
