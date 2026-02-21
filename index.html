@@ -157,10 +157,69 @@ document.getElementById("changeNameBtn").addEventListener("click", () => {
   nameDisplayArea.style.display = "none";
   nameEditArea.style.display = "flex";
 });
+    const FAMILY_CODE = "1234"; // 好きな番号に変更OK
+
+let myName = "";
+
+document.getElementById("loginBtn").addEventListener("click", () => {
+  const code = document.getElementById("familyCode").value;
+  const user = document.getElementById("userSelect").value;
+
+  if (code !== FAMILY_CODE) {
+    alert("パスコードが違います");
+    return;
+  }
+
+  if (!user) {
+    alert("名前を選んでください");
+    return;
+  }
+
+  myName = user;
+
+  localStorage.setItem("familyLogin", "ok");
+  localStorage.setItem("chatName", myName);
+
+  document.getElementById("loginScreen").style.display = "none";
+});
+
+// 自動ログイン
+if (localStorage.getItem("familyLogin") === "ok") {
+  myName = localStorage.getItem("chatName");
+  document.getElementById("loginScreen").style.display = "none";
+}
   </script>
 
   <!-- 🔹 CSS LINE風UI + ヘッダー -->
   <style>
+    #loginScreen {
+  position: fixed;
+  inset: 0;
+  background: #f4f6f8;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+#loginScreen input,
+#loginScreen select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 200px;
+}
+
+#loginScreen button {
+  background: #06c755;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
     :root {
       --main-color: #06c755;
     }
@@ -355,6 +414,22 @@ document.getElementById("changeNameBtn").addEventListener("click", () => {
 </head>
 
 <body>
+  <div id="loginScreen">
+  <h3>家族チャットへようこそ</h3>
+
+  <input type="password" id="familyCode" placeholder="パスコード">
+
+  <select id="userSelect">
+    <option value="">あなたは誰？</option>
+    <option>まよ</option>
+    <option>ほのか</option>
+    <option>りょう</option>
+    <option>しゅん</option>
+    <option>さとし</option>
+  </select>
+
+  <button id="loginBtn">入室</button>
+</div>
   <div class="chat-container">
 
     <div class="header">MHRSS Chat</div>
