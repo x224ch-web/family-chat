@@ -330,6 +330,12 @@ document.getElementById("changeNameBtn").addEventListener("click", () => {
   border-style: solid;
   border-color: transparent white transparent transparent;
 }
+    .typing-indicator {
+  font-size: 12px;
+  color: #666;
+  padding: 4px 15px;
+  height: 16px;
+}
   </style>
 </head>
 
@@ -360,6 +366,7 @@ document.getElementById("changeNameBtn").addEventListener("click", () => {
     <div id="messages" class="messages"></div>
 
     <!-- 🟢 メッセージ送信エリア -->
+    <div id="typingIndicator" class="typing-indicator"></div>
     <div class="input-area">
       <textarea id="message" rows="1" placeholder="メッセージ"></textarea>
       <button id="sendBtn">➤</button>
