@@ -306,6 +306,29 @@ document.getElementById("changeNameBtn").addEventListener("click", () => {
   word-break: break-word;
   line-height: 1.6;
 }
+    /* ===== 吹き出ししっぽ ===== */
+
+/* 自分のしっぽ（右） */
+.me::after {
+  content: "";
+  position: absolute;
+  right: -6px;
+  top: 10px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent transparent transparent var(--main-color);
+}
+
+/* 相手のしっぽ（左） */
+.other::after {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 10px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent white transparent transparent;
+}
   </style>
 </head>
 
