@@ -151,8 +151,6 @@ document.getElementById("changeNameBtn").addEventListener("click", () => {
   nameEditArea.style.display = "flex";
 });
 
-let myName = "";
-
 document.getElementById("loginBtn").addEventListener("click", () => {
   const code = document.getElementById("familyCode").value;
   const user = document.getElementById("userSelect").value;
@@ -175,7 +173,47 @@ document.getElementById("loginBtn").addEventListener("click", () => {
   document.getElementById("loginScreen").style.display = "none";
 });
 
+document.addEventListener("DOMContentLoaded", () => {
 
+  const FAMILY_CODE = "2244";
+
+  let myName = "";
+
+  const loginBtn = document.getElementById("loginBtn");
+
+  loginBtn.addEventListener("click", () => {
+
+    const code = document.getElementById("familyCode").value;
+    const user = document.getElementById("userSelect").value;
+
+    if (code !== FAMILY_CODE) {
+      alert("パスコードが違います");
+      return;
+    }
+
+    if (!user) {
+      alert("名前を選んでください");
+      return;
+    }
+
+    myName = user;
+
+    localStorage.setItem("familyLogin", "ok");
+    localStorage.setItem("chatName", myName);
+
+    document.getElementById("loginScreen").style.display = "none";
+
+    console.log("ログイン成功:", myName);
+
+  });
+
+  // 自動ログイン
+  if (localStorage.getItem("familyLogin") === "ok") {
+    myName = localStorage.getItem("chatName");
+    document.getElementById("loginScreen").style.display = "none";
+  }
+
+});
   </script>
 
   <!-- 🔹 CSS LINE風UI + ヘッダー -->
