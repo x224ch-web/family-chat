@@ -7,7 +7,8 @@
 
   <!-- Firebase SDK -->
   <script type="module">
-   import { getDatabase, ref, push, onChildAdded, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    import { initializeApp } from "...";
+    import { getDatabase, ref, push, onChildAdded, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
     // 🔹 Firebase 設定
     const firebaseConfig = {
