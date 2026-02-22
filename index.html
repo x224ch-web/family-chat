@@ -33,7 +33,37 @@ document.addEventListener("DOMContentLoaded", () => {
   const FAMILY_CODE = "2244";
 
   document.getElementById("loginBtn").addEventListener("click", () => {
+onValue(messagesRef, snapshot => {
 
+  const messages = snapshot.val();
+  if (!messages) return;
+
+  const totalMessages = Object.keys(messages).length;
+
+  onValue(ref(db, "reads"), readSnap => {
+
+    const reads = readSnap.val() || {};
+    let myReadCount = 0;
+
+    Object.keys(reads).forEach(messageId => {
+      if (reads[messageId] && reads[messageId][myName]) {
+        myReadCount++;
+      }
+    });
+
+    const unread = totalMessages - myReadCount;
+
+    const div = document.getElementById("unreadCount");
+
+    if (unread > 0) {
+      div.textContent = "未読 " + unread;
+    } else {
+      div.textContent = "";
+    }
+
+  });
+
+});
     const code = document.getElementById("familyCode").value;
     const user = document.getElementById("userSelect").value;
 
