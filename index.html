@@ -136,6 +136,10 @@ document.getElementById("sendBtn").addEventListener("click", () => {
 onChildAdded(messagesRef, snapshot => {
 
   const data = snapshot.val();
+  
+  if (Notification.permission === "granted" && data.name !== myName) {
+  new Notification(data.name + ": " + data.text);
+}
   const messageId = snapshot.key;
 
   set(ref(db, "reads/" + messageId + "/" + myName), true);
