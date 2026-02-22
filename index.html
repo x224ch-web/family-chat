@@ -86,7 +86,24 @@ onValue(messagesRef, snapshot => {
     }
 
   });
+document.getElementById("enableNotify").addEventListener("click", () => {
 
+  if (!("Notification" in window)) {
+    alert("このブラウザは通知に対応していません");
+    return;
+  }
+
+  Notification.requestPermission().then(permission => {
+
+    if (permission === "granted") {
+      alert("通知が有効になりました");
+    } else {
+      alert("通知が拒否されました");
+    }
+
+  });
+
+});
 });
   // ⭐オンライン表示ロジック（ここが②）
   onValue(ref(db, "online"), snapshot => {
