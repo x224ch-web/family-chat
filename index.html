@@ -88,7 +88,6 @@ document.getElementById("sendBtn").addEventListener("click", () => {
   onChildAdded(messagesRef, snapshot => {
 
   const data = snapshot.val();
-
   const messageId = snapshot.key;
 
   // ⭐既読登録
@@ -100,6 +99,16 @@ document.getElementById("sendBtn").addEventListener("click", () => {
   document.getElementById("messages").appendChild(div);
 
 });
+  const readDiv = document.createElement("div");
+readDiv.style.fontSize = "10px";
+
+onValue(ref(db, "reads/" + messageId), snap => {
+  const readers = snap.val();
+  const count = readers ? Object.keys(readers).length : 0;
+  readDiv.textContent = "既読 " + count;
+});
+
+div.appendChild(readDiv);
 });
 </script>
 
