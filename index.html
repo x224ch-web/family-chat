@@ -89,10 +89,16 @@ document.getElementById("sendBtn").addEventListener("click", () => {
 
   const data = snapshot.val();
 
+  const messageId = snapshot.key;
+
+  // ⭐既読登録
+  set(ref(db, "reads/" + messageId + "/" + myName), true);
+
   const div = document.createElement("div");
   div.textContent = data.name + ": " + data.text;
 
   document.getElementById("messages").appendChild(div);
+
 });
 });
 </script>
