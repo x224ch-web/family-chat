@@ -189,7 +189,9 @@ div.appendChild(timeDiv);
   });
 
   document.getElementById("messages").appendChild(div);
+  if (data.name === myName) {
   document.getElementById("messages").appendChild(readDiv);
+}
   const container = document.getElementById("messages");
   container.scrollTop = container.scrollHeight;
 
