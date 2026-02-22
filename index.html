@@ -42,35 +42,34 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    if (!user) {
+      alert("名前を選んでください");
+      return;
+    }
+
     myName = user;
 
     document.getElementById("loginScreen").style.display = "none";
-  });
-const onlineRef = ref(db, "online/" + myName);
 
-  set(onlineRef, true);
+    // ⭐オンライン登録（ここが①）
+    const onlineRef = ref(db, "online/" + myName);
+    set(onlineRef, true);
+    onDisconnect(onlineRef).remove();
 
-  onDisconnect(onlineRef).remove();
-  document.getElementById("sendBtn").addEventListener("click", () => {
-
-    const text = document.getElementById("message").value;
-
-    if (!text || !myName) return;
-
-    push(messagesRef, {
-      name: myName,
-      text,
-      timestamp: Date.now()
-    });
-
-    document.getElementById("message").value = "";
   });
 
-  onChildAdded(messagesRef, snap => {
-    const d = snap.val();
-    const div = document.createElement("div");
-    div.textContent = `${d.name}: ${d.text}`;
-    document.getElementById("messages").appendChild(div);
+  // ⭐オンライン表示ロジック（ここが②）
+  onValue(ref(db, "online"), snapshot => {
+
+    const data = snapshot.val();
+    const div = document.getElementById("onlineUsers");
+
+    if (!data) {
+      div.textContent = "";
+      return;
+    }
+
+    div.textContent = "オンライン: " + Object.keys(data).join(", ");
   });
 
 });
