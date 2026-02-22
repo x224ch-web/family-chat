@@ -151,6 +151,7 @@ document.getElementById("sendBtn").addEventListener("click", () => {
     text,
     timestamp: Date.now()
   });
+  set(ref(db, "typing/" + myName), null);
 
   document.getElementById("message").value = "";
 });
