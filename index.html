@@ -51,6 +51,27 @@ document.addEventListener("DOMContentLoaded", () => {
     myName = user;
 
     document.getElementById("loginScreen").style.display = "none";
+    // ⭐タイピング機能ここから
+
+const typingRef = ref(db, "typing/" + myName);
+
+const messageInput = document.getElementById("message");
+
+let typingTimeout;
+
+messageInput.addEventListener("input", () => {
+
+  set(typingRef, true);
+
+  clearTimeout(typingTimeout);
+
+  typingTimeout = setTimeout(() => {
+    set(typingRef, null);
+  }, 1500);
+
+});
+
+// ⭐タイピング機能ここまで
 
     // ⭐オンライン登録（ここが①）
     const onlineRef = ref(db, "online/" + myName);
