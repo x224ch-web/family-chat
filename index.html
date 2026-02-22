@@ -33,6 +33,30 @@ document.addEventListener("DOMContentLoaded", () => {
   const FAMILY_CODE = "2244";
 
   document.getElementById("loginBtn").addEventListener("click", () => {
+
+    const code = document.getElementById("familyCode").value;
+    const user = document.getElementById("userSelect").value;
+
+    if (code !== FAMILY_CODE) {
+      alert("パスコード違います");
+      return;
+    }
+
+    if (!user) {
+      alert("名前を選んでください");
+      return;
+    }
+
+    myName = user;
+
+    document.getElementById("loginScreen").style.display = "none";
+
+    // ⭐オンライン登録（ここが①）
+    const onlineRef = ref(db, "online/" + myName);
+    set(onlineRef, true);
+    onDisconnect(onlineRef).remove();
+
+  });
 onValue(messagesRef, snapshot => {
 
   const messages = snapshot.val();
@@ -64,30 +88,6 @@ onValue(messagesRef, snapshot => {
   });
 
 });
-    const code = document.getElementById("familyCode").value;
-    const user = document.getElementById("userSelect").value;
-
-    if (code !== FAMILY_CODE) {
-      alert("パスコード違います");
-      return;
-    }
-
-    if (!user) {
-      alert("名前を選んでください");
-      return;
-    }
-
-    myName = user;
-
-    document.getElementById("loginScreen").style.display = "none";
-
-    // ⭐オンライン登録（ここが①）
-    const onlineRef = ref(db, "online/" + myName);
-    set(onlineRef, true);
-    onDisconnect(onlineRef).remove();
-
-  });
-
   // ⭐オンライン表示ロジック（ここが②）
   onValue(ref(db, "online"), snapshot => {
 
