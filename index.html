@@ -46,7 +46,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("loginScreen").style.display = "none";
   });
+const onlineRef = ref(db, "online/" + myName);
 
+  set(onlineRef, true);
+
+  onDisconnect(onlineRef).remove();
   document.getElementById("sendBtn").addEventListener("click", () => {
 
     const text = document.getElementById("message").value;
