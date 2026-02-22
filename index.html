@@ -6,11 +6,11 @@
   <title>Family Chat</title>
 
   <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "...";
-    import { getDatabase, ref, push, onChildAdded, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+ <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-    // 🔹 Firebase 設定
+// 🔹 Firebase 設定
     const firebaseConfig = {
       apiKey: "AIzaSyC8qlv0imeiH6Vw_qu8295D_wno1xvEpKc",
       authDomain: "x224ch-c937f.firebaseapp.com",
@@ -21,198 +21,55 @@
       appId: "1:217831065440:web:c15038f05ede6973448005"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
-    const messagesRef = ref(database, "messages");
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const messagesRef = ref(db, "messages");
 
-  
-    // 🔹 メッセージ送信
-    window.sendMessage = function() {
-      const nameInput = document.getElementById("name");
-      const messageInput = document.getElementById("message");
-
-      const name = nameInput.value.trim();
-      const message = messageInput.value.trim();
-      if (!name || !message) return;
-
-      myName = name;
-      localStorage.setItem("myName", myName);
-
-      push(messagesRef, {
-        name,
-        text: message,
-        timestamp: Date.now()
-      });
-
-      messageInput.value = "";
-    };
-
-
-      // 送信ボタン・Enterキー送信
-      document.getElementById("sendBtn").addEventListener("click", window.sendMessage);
-      document.getElementById("message").addEventListener("keydown", (e) => {
-        if (e.key === "Enter") window.sendMessage();
-      });
-
-      const typingRef = ref(database, "typing");
-
-let typingTimeout;
-
-document.getElementById("message").addEventListener("input", () => {
-  if (!myName) return;
-
-  set(ref(database, "typing/" + myName), true);
-
-  clearTimeout(typingTimeout);
-
-  typingTimeout = setTimeout(() => {
-    remove(ref(database, "typing/" + myName));
-  }, 2000);
-});
-      // 🔔 着信音
-      const sound = document.getElementById("notificationSound");
-
-      // 🔹 メッセージ表示
-     onChildAdded(messagesRef, (snapshot) => {
-  const data = snapshot.val();
-
-  const messageDiv = document.createElement("div");
-  messageDiv.classList.add("message");
-
-  if (data.name === myName) {
-    messageDiv.classList.add("me");
-  } else {
-    messageDiv.classList.add("other");
-  }
-
-  const nameDiv = document.createElement("div");
-  nameDiv.classList.add("name");
-  nameDiv.textContent = data.name;
-
-  const textDiv = document.createElement("div");
-  textDiv.textContent = data.text;
-
-  const timeDiv = document.createElement("div");
-  timeDiv.classList.add("time");
-
-  const date = new Date(data.timestamp);
-  timeDiv.textContent =
-    date.getHours().toString().padStart(2, "0") + ":" +
-    date.getMinutes().toString().padStart(2, "0");
-
-  messageDiv.appendChild(nameDiv);
-  messageDiv.appendChild(textDiv);
-  messageDiv.appendChild(timeDiv);
-
-  document.getElementById("messages").appendChild(messageDiv);
-});
-
-      // 🔹 名前リセットボタン
-      document.getElementById("resetNameBtn").addEventListener("click", () => {
-        localStorage.removeItem("myName");
-        myName = "";
-        document.getElementById("name").value = "";
-        alert("名前がリセットされました。新しい名前を入力してください。");
-      });
-    });
-    
-
-// ===== 名前エリアの切り替え =====
-
-const nameEditArea = document.getElementById("nameEditArea");
-const nameDisplayArea = document.getElementById("nameDisplayArea");
-const currentNameSpan = document.getElementById("currentName");
-
-let savedChatName = localStorage.getItem("chatName");
-
-if (savedChatName) {
-  myName = savedChatName;
-  currentNameSpan.textContent = myName;
-  nameEditArea.style.display = "none";
-  nameDisplayArea.style.display = "flex";
-}
-
-document.getElementById("saveNameBtn").addEventListener("click", () => {
-  const input = document.getElementById("name").value.trim();
-  if (!input) return;
-
-  myName = input;
-  localStorage.setItem("chatName", myName);
-
-  currentNameSpan.textContent = myName;
-  nameEditArea.style.display = "none";
-  nameDisplayArea.style.display = "flex";
-});
-
-document.getElementById("changeNameBtn").addEventListener("click", () => {
-  nameDisplayArea.style.display = "none";
-  nameEditArea.style.display = "flex";
-});
-
-document.getElementById("loginBtn").addEventListener("click", () => {
-  const code = document.getElementById("familyCode").value;
-  const user = document.getElementById("userSelect").value;
-
-  if (code !== FAMILY_CODE) {
-    alert("パスコードが違います");
-    return;
-  }
-
-  if (!user) {
-    alert("名前を選んでください");
-    return;
-  }
-
-  myName = user;
-
-  localStorage.setItem("familyLogin", "ok");
-  localStorage.setItem("chatName", myName);
-
-  document.getElementById("loginScreen").style.display = "none";
-});
+let myName = "";
 
 document.addEventListener("DOMContentLoaded", () => {
 
   const FAMILY_CODE = "2244";
 
-  let myName = "";
-
-  const loginBtn = document.getElementById("loginBtn");
-
-  loginBtn.addEventListener("click", () => {
+  document.getElementById("loginBtn").addEventListener("click", () => {
 
     const code = document.getElementById("familyCode").value;
     const user = document.getElementById("userSelect").value;
 
     if (code !== FAMILY_CODE) {
-      alert("パスコードが違います");
-      return;
-    }
-
-    if (!user) {
-      alert("名前を選んでください");
+      alert("パスコード違います");
       return;
     }
 
     myName = user;
 
-    localStorage.setItem("familyLogin", "ok");
-    localStorage.setItem("chatName", myName);
-
     document.getElementById("loginScreen").style.display = "none";
-
-    console.log("ログイン成功:", myName);
-
   });
 
-  // 自動ログイン
-  if (localStorage.getItem("familyLogin") === "ok") {
-    myName = localStorage.getItem("chatName");
-    document.getElementById("loginScreen").style.display = "none";
-  }
+  document.getElementById("sendBtn").addEventListener("click", () => {
+
+    const text = document.getElementById("message").value;
+
+    if (!text || !myName) return;
+
+    push(messagesRef, {
+      name: myName,
+      text,
+      timestamp: Date.now()
+    });
+
+    document.getElementById("message").value = "";
+  });
+
+  onChildAdded(messagesRef, snap => {
+    const d = snap.val();
+    const div = document.createElement("div");
+    div.textContent = `${d.name}: ${d.text}`;
+    document.getElementById("messages").appendChild(div);
+  });
 
 });
-  </script>
+</script>
 
   <!-- 🔹 CSS LINE風UI + ヘッダー -->
   <style>
