@@ -33,6 +33,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const FAMILY_CODE = "2244";
 
+  // ⭐音の初期化（最重要）
+const sound = document.getElementById("notificationSound");
+
+document.addEventListener("click", () => {
+  sound.play().then(() => {
+    sound.pause();
+    sound.currentTime = 0;
+  }).catch(() => {});
+}, { once: true });
+
   document.getElementById("loginBtn").addEventListener("click", () => {
 
     const code = document.getElementById("familyCode").value;
@@ -183,6 +193,13 @@ onChildAdded(messagesRef, snapshot => {
   if (Notification.permission === "granted" && data.name !== myName) {
   new Notification(data.name + ": " + data.text);
 }
+  // ⭐新着音
+if (data.name !== myName) {
+  const sound = document.getElementById("notificationSound");
+  sound.currentTime = 0;
+  sound.play().catch(() => {});
+}
+  
   const messageId = snapshot.key;
 
   set(ref(db, "reads/" + messageId + "/" + myName), true);
