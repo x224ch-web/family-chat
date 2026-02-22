@@ -140,6 +140,26 @@ document.getElementById("enableNotify").addEventListener("click", () => {
 
     div.textContent = "オンライン: " + Object.keys(data).join(", ");
   });
+  // ⭐入力中表示
+onValue(ref(db, "typing"), snapshot => {
+
+  const data = snapshot.val();
+  const indicator = document.getElementById("typingIndicator");
+
+  if (!data) {
+    indicator.textContent = "";
+    return;
+  }
+
+  const names = Object.keys(data).filter(name => name !== myName);
+
+  if (names.length > 0) {
+    indicator.textContent = names.join(", ") + " が入力中…";
+  } else {
+    indicator.textContent = "";
+  }
+
+});
 document.getElementById("sendBtn").addEventListener("click", () => {
 
   const text = document.getElementById("message").value.trim();
