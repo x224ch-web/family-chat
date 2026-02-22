@@ -179,6 +179,7 @@ div.appendChild(textDiv);
 div.appendChild(timeDiv);
 
   const readDiv = document.createElement("div");
+  readDiv.classList.add("read");
   readDiv.style.fontSize = "10px";
 
   onValue(ref(db, "reads/" + messageId), snap => {
@@ -188,6 +189,7 @@ div.appendChild(timeDiv);
   });
 
   document.getElementById("messages").appendChild(div);
+  document.getElementById("messages").appendChild(readDiv);
   const container = document.getElementById("messages");
   container.scrollTop = container.scrollHeight;
 
@@ -415,6 +417,13 @@ div.appendChild(timeDiv);
   color: #666;
   padding: 4px 15px;
   height: 16px;
+}
+    .read {
+  font-size: 10px;
+  color: #666;
+  text-align: right;
+  margin-right: 10px;
+  margin-bottom: 6px;
 }
   </style>
 </head>
