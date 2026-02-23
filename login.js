@@ -1,3 +1,4 @@
+console.log("login.js 読み込みOK");
 export function render(container) {
 
   container.innerHTML = `
