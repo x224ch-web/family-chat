@@ -15,3 +15,11 @@
   background: none;
   font-size: 22px;
 }
+html, body, #app {
+  height: 100%;
+}
+
+#view {
+  height: calc(100% - 60px);
+  overflow: auto;
+}
