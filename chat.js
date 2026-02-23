@@ -28,5 +28,11 @@ function initTabs(container) {
 
 function loadTab(name, view) {
 
-  import(`./${name}.js`).then(mod => mod.render(view));
+  import(`./${name}.js`)
+    .then(mod => mod.render(view))
+    .catch(err => {
+      console.error("タブ読み込みエラー:", err);
+      view.innerHTML = "<p>読み込みエラー</p>";
+    });
+
 }
