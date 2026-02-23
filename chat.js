@@ -28,6 +28,5 @@ function initTabs(container) {
 
 function loadTab(name, view) {
 
-  import(`./${name}.js`)
-    .then(mod => mod.render(view));
+  import(`./${name}.js`).then(mod => mod.render(view));
 }
