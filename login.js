@@ -1,3 +1,4 @@
+alert("login.js loaded");
 export function render(container) {
 
   console.log("login render start");
