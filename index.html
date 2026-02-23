@@ -490,33 +490,37 @@ div.appendChild(timeDiv);
 </head>
 
 <body>
+
+<div class="app-frame">
+
   <div id="loginScreen">
-  <h3>秘密のパスコードは、1234 です。</h3>
+    <h3>秘密のパスコードは、1234 です。</h3>
 
-  <input type="password" id="familyCode" placeholder="パスコード">
+    <input type="password" id="familyCode" placeholder="パスコード">
 
-  <select id="userSelect">
-    <option value="">あなたは誰？</option>
-    <option>まよ</option>
-    <option>ほのか</option>
-    <option>りょう</option>
-    <option>しゅん</option>
-    <option>さとし</option>
-  </select>
+    <select id="userSelect">
+      <option value="">あなたは誰？</option>
+      <option>まよ</option>
+      <option>ほのか</option>
+      <option>りょう</option>
+      <option>しゅん</option>
+      <option>さとし</option>
+    </select>
 
-  <button id="loginBtn">入室</button>
-</div>
+    <button id="loginBtn">入室</button>
+  </div>
+
   <div class="chat-container">
 
     <div class="header">MhrsS Chat</div>
     <div id="onlineUsers" style="padding:6px 12px; font-size:12px; background:#fff;"></div>
     <div id="unreadCount"></div>
     <button id="enableNotify" style="margin:6px;">🔔 通知を有効にする</button>
-    <!-- 🟢 メッセージ表示 -->
+
     <div id="messages" class="messages"></div>
 
-    <!-- 🟢 メッセージ送信エリア -->
     <div id="typingIndicator" class="typing-indicator"></div>
+
     <div class="input-area">
       <textarea id="message" rows="1" placeholder="メッセージ"></textarea>
       <button id="sendBtn">➤</button>
@@ -524,7 +528,11 @@ div.appendChild(timeDiv);
 
   </div>
 
-  <!-- 🔔 着信音 -->
-  <audio id="notificationSound" src="notification.mp3"></audio>
+</div>
+
+<audio id="notificationSound" src="notification.mp3"></audio>
+
+<script type="module" src="app.js"></script>
+
 </body>
 </html>
