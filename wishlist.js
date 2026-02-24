@@ -1,17 +1,15 @@
-import { getDatabase, ref, push, onValue, remove }
+import { getDatabase, ref, push, onValue, remove, off }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+import { registerListener } from "./listenerManager.js";
 
 export function render(container) {
 
   container.innerHTML = `
-    <div style="padding:16px;">
-      <h3>欲しいものリスト</h3>
-
-      <input id="wishInput" placeholder="欲しいものを書く">
-      <button id="addWish">追加</button>
-
-      <ul id="wishList"></ul>
-    </div>
+    <h3>欲しいものリスト</h3>
+    <input id="wishInput">
+    <button id="addWish">追加</button>
+    <ul id="wishList"></ul>
   `;
 
   const db = getDatabase();
@@ -21,7 +19,6 @@ export function render(container) {
   const list = container.querySelector("#wishList");
 
   container.querySelector("#addWish").onclick = () => {
-
     if (!input.value.trim()) return;
 
     push(wishRef, {
@@ -45,7 +42,7 @@ export function render(container) {
 
       li.innerHTML = `
         ${data.text}
-        <button style="margin-left:10px;">削除</button>
+        <button>削除</button>
       `;
 
       li.querySelector("button").onclick = () => {
@@ -57,4 +54,6 @@ export function render(container) {
 
   });
 
+  // ⭐ listener登録
+  registerListener(() => off(wishRef));
 }
