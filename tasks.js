@@ -88,5 +88,5 @@ export function render(container) {
     });
 
   });
-
+registerListener(() => off(ref));
 }
