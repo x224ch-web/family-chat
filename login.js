@@ -1,5 +1,3 @@
-alert("login.js loaded");
-
 const SECRET_CODE = "1234";
 
 export function render(container) {
