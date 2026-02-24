@@ -10,7 +10,16 @@ export function render(container) {
       <button data-tab="wishlist">🛒</button>
     </nav>
   `;
+const logoutBtn = document.createElement("button");
+logoutBtn.textContent = "ログアウト";
 
+logoutBtn.onclick = () => {
+  localStorage.removeItem("familyUser");
+  location.reload();
+};
+
+container.prepend(logoutBtn);
+  
   initTabs(container);
 }
 
