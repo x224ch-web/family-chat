@@ -17,16 +17,25 @@ export function render(container) {
 function initTabs(container) {
 
   const view = container.querySelector("#view");
+  const buttons = container.querySelectorAll(".tabbar button");
 
-  document.querySelectorAll(".tabbar button").forEach(btn => {
-    btn.onclick = () => loadTab(btn.dataset.tab, view);
+  buttons.forEach(btn => {
+    btn.onclick = () => {
+
+      // ハイライト
+      buttons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      loadTab(btn.dataset.tab, view);
+    };
   });
 
-  // 最初はチャット
   loadTab("chat", view);
 }
 
 function loadTab(name, view) {
+
+  view.innerHTML = "読み込み中...";
 
   import(`./${name}.js`)
     .then(mod => mod.render(view))
