@@ -1,3 +1,5 @@
+import { clearListeners } from "./listenerManager.js";
+
 export function render(container) {
 
   container.innerHTML = `
@@ -10,16 +12,22 @@ export function render(container) {
       <button data-tab="wishlist">🛒</button>
     </nav>
   `;
-const logoutBtn = document.createElement("button");
-logoutBtn.textContent = "ログアウト";
 
-logoutBtn.onclick = () => {
-  localStorage.removeItem("familyUser");
-  location.reload();
-};
+  // ⭐ ログアウトボタン
+  const logoutBtn = document.createElement("button");
+  logoutBtn.textContent = "ログアウト";
 
-container.prepend(logoutBtn);
-  
+  logoutBtn.style.position = "absolute";
+  logoutBtn.style.top = "10px";
+  logoutBtn.style.right = "10px";
+
+  logoutBtn.onclick = () => {
+    localStorage.removeItem("familyUser");
+    location.reload();
+  };
+
+  container.prepend(logoutBtn);
+
   initTabs(container);
 }
 
@@ -31,7 +39,10 @@ function initTabs(container) {
   buttons.forEach(btn => {
     btn.onclick = () => {
 
-      // ハイライト
+      // ⭐ listener全解除
+      clearListeners();
+
+      // ⭐ ハイライト
       buttons.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
 
@@ -47,10 +58,16 @@ function loadTab(name, view) {
   view.innerHTML = "読み込み中...";
 
   import(`./${name}.js`)
-    .then(mod => mod.render(view))
+    .then(mod => {
+      try {
+        mod.render(view);
+      } catch (e) {
+        console.error("render error:", e);
+        view.innerHTML = "描画エラー";
+      }
+    })
     .catch(err => {
       console.error("タブ読み込みエラー:", err);
       view.innerHTML = "<p>読み込みエラー</p>";
     });
-registerListener(() => off(ref));
 }
