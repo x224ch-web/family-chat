@@ -51,6 +51,7 @@ export function render(container) {
     try {
       const mod = await import("./chat.js");
       console.log("chat load OK");
+      localStorage.setItem("familyUser", user);
       mod.render(container);
 
     } catch (err) {
