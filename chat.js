@@ -43,5 +43,5 @@ function loadTab(name, view) {
       console.error("タブ読み込みエラー:", err);
       view.innerHTML = "<p>読み込みエラー</p>";
     });
-
+registerListener(() => off(ref));
 }
