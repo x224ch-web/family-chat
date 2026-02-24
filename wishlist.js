@@ -1,33 +1,60 @@
-// wishlist.js
+import { getDatabase, ref, push, onValue, remove }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 export function render(container) {
 
-  // ① 画面の中身を作る
   container.innerHTML = `
-    <h3>欲しいものリスト</h3>
+    <div style="padding:16px;">
+      <h3>欲しいものリスト</h3>
 
-    <input id="wishInput" placeholder="欲しいものを書く">
-    <button id="addWish">追加</button>
+      <input id="wishInput" placeholder="欲しいものを書く">
+      <button id="addWish">追加</button>
 
-    <ul id="wishList"></ul>
+      <ul id="wishList"></ul>
+    </div>
   `;
 
-  // ② ボタン動作を設定
-  initWishlist();
-}
+  const db = getDatabase();
+  const wishRef = ref(db, "wishlist");
 
-function initWishlist() {
-  const input = document.getElementById("wishInput");
-  const btn = document.getElementById("addWish");
-  const list = document.getElementById("wishList");
+  const input = container.querySelector("#wishInput");
+  const list = container.querySelector("#wishList");
 
-  btn.onclick = () => {
+  container.querySelector("#addWish").onclick = () => {
+
     if (!input.value.trim()) return;
 
-    const li = document.createElement("li");
-    li.textContent = input.value;
+    push(wishRef, {
+      text: input.value,
+      createdAt: Date.now()
+    });
 
-    list.appendChild(li);
     input.value = "";
   };
+
+  onValue(wishRef, snapshot => {
+
+    list.innerHTML = "";
+
+    snapshot.forEach(child => {
+
+      const data = child.val();
+      const id = child.key;
+
+      const li = document.createElement("li");
+
+      li.innerHTML = `
+        ${data.text}
+        <button style="margin-left:10px;">削除</button>
+      `;
+
+      li.querySelector("button").onclick = () => {
+        remove(ref(db, "wishlist/" + id));
+      };
+
+      list.appendChild(li);
+    });
+
+  });
+
 }
