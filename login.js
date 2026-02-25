@@ -38,10 +38,11 @@ export function render(container) {
       return;
     }
 
-    // ⭐ とにかくchatへ
-    import("./chat.js").then(mod => {
-      mod.render(container);
-    });
+    localStorage.setItem("familyUser", user);
+
+import("./chat.js").then(mod => {
+  mod.render(container);
+});
 
   };
 
