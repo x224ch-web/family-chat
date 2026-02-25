@@ -8,42 +8,96 @@ export function render(container) {
 
       <input id="familyCode" type="password" placeholder="パスコード"><br><br>
 
-      <select id="userSelect">
-        <option value="">あなたは誰？</option>
-        <option>まよ</option>
-        <option>ほのか</option>
-        <option>りょう</option>
-        <option>しゅん</option>
-        <option>さとし</option>
-      </select><br><br>
+      <p>あなたは誰？</p>
 
-      <button id="loginBtn">入室</button>
+      <div class="profile-slider" id="profileSlider">
+
+        <div class="profile-card" data-user="まよ">👩<br>まよ</div>
+        <div class="profile-card" data-user="ほのか">👧<br>ほのか</div>
+        <div class="profile-card" data-user="りょう">👦<br>りょう</div>
+        <div class="profile-card" data-user="しゅん">🧑<br>しゅん</div>
+        <div class="profile-card" data-user="さとし">👨<br>さとし</div>
+
+      </div>
     </div>
   `;
 
-  const btn = container.querySelector("#loginBtn");
+  injectStyles();
 
-  btn.onclick = () => {
+  const slider = container.querySelector("#profileSlider");
+  const cards = container.querySelectorAll(".profile-card");
 
-    const code = container.querySelector("#familyCode").value;
-    const user = container.querySelector("#userSelect").value;
+  function updateScale() {
+    const center = slider.offsetWidth / 2;
 
-    if (code !== SECRET_CODE) {
-      alert("パスコード違います");
-      return;
+    cards.forEach(card => {
+      const rect = card.getBoundingClientRect();
+      const cardCenter = rect.left + rect.width / 2;
+      const distance = Math.abs(center - cardCenter);
+
+      const scale = Math.max(1.2 - distance / 400, 0.8);
+      card.style.transform = `scale(${scale})`;
+    });
+  }
+
+  slider.addEventListener("scroll", updateScale);
+  updateScale();
+
+  cards.forEach(card => {
+
+    card.onclick = () => {
+
+      const code = container.querySelector("#familyCode").value;
+
+      if (code !== SECRET_CODE) {
+        alert("パスコード違います");
+        return;
+      }
+
+      const user = card.dataset.user;
+
+      localStorage.setItem("familyUser", user);
+
+      import("./chat.js").then(mod => {
+        mod.render(container);
+      });
+
+    };
+
+  });
+
+}
+
+function injectStyles() {
+
+  if (document.getElementById("loginCardStyles")) return;
+
+  const style = document.createElement("style");
+  style.id = "loginCardStyles";
+
+  style.textContent = `
+    .profile-slider {
+      display:flex;
+      overflow-x:auto;
+      gap:20px;
+      padding:20px 0;
+      scroll-snap-type:x mandatory;
     }
 
-    if (!user) {
-      alert("名前を選んでください");
-      return;
+    .profile-card {
+      min-width:120px;
+      height:140px;
+      background:white;
+      border-radius:20px;
+      box-shadow:0 4px 10px rgba(0,0,0,0.15);
+      text-align:center;
+      padding:20px;
+      scroll-snap-align:center;
+      transition:transform 0.25s;
+      cursor:pointer;
+      font-size:20px;
     }
+  `;
 
-    localStorage.setItem("familyUser", user);
-
-import("./chat.js").then(mod => {
-  mod.render(container);
-});
-
-  };
-
+  document.head.appendChild(style);
 }
