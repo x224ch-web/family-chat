@@ -8,15 +8,32 @@ export function render(container) {
 
       <input id="familyCode" type="password" placeholder="パスコード"><br><br>
 
-      <p>あなたは誰？</p>
-
       <div class="profile-slider" id="profileSlider">
 
-        <div class="profile-card" data-user="まよ">👩<br>まよ</div>
-        <div class="profile-card" data-user="ほのか">👧<br>ほのか</div>
-        <div class="profile-card" data-user="りょう">👦<br>りょう</div>
-        <div class="profile-card" data-user="しゅん">🧑<br>しゅん</div>
-        <div class="profile-card" data-user="さとし">👨<br>さとし</div>
+        <div class="profile-card" data-user="まよ">
+          <div class="avatar">👩</div>
+          <p>まよ</p>
+        </div>
+
+        <div class="profile-card" data-user="ほのか">
+          <div class="avatar">👧</div>
+          <p>ほのか</p>
+        </div>
+
+        <div class="profile-card" data-user="りょう">
+          <div class="avatar">👦</div>
+          <p>りょう</p>
+        </div>
+
+        <div class="profile-card" data-user="しゅん">
+          <div class="avatar">🧑</div>
+          <p>しゅん</p>
+        </div>
+
+        <div class="profile-card" data-user="さとし">
+          <div class="avatar">👨</div>
+          <p>さとし</p>
+        </div>
 
       </div>
     </div>
@@ -27,25 +44,56 @@ export function render(container) {
   const slider = container.querySelector("#profileSlider");
   const cards = container.querySelectorAll(".profile-card");
 
-  function updateScale() {
-    const center = slider.offsetWidth / 2;
+  let activeCard = null;
+
+  function animate() {
+
+    const rect = slider.getBoundingClientRect();
+    const center = rect.left + rect.width / 2;
+
+    let maxScale = 0;
 
     cards.forEach(card => {
-      const rect = card.getBoundingClientRect();
-      const cardCenter = rect.left + rect.width / 2;
+
+      const r = card.getBoundingClientRect();
+      const cardCenter = r.left + r.width / 2;
+
       const distance = Math.abs(center - cardCenter);
 
-      const scale = Math.max(1.2 - distance / 400, 0.8);
-      card.style.transform = `scale(${scale})`;
+      let scale = 1.8 - (distance / 250);
+      scale = Math.max(scale, 0.5);
+
+      let rotate = (center - cardCenter) / 20;
+
+      card.style.transform =
+        `translateZ(0) scale(${scale}) rotateY(${rotate}deg)`;
+
+      card.style.zIndex = Math.round(scale * 100);
+
+      if (scale > maxScale) {
+        maxScale = scale;
+        activeCard = card;
+      }
+
     });
+
+    cards.forEach(card => {
+      card.classList.toggle("active", card === activeCard);
+    });
+
+    requestAnimationFrame(animate);
   }
 
-  slider.addEventListener("scroll", updateScale);
-  updateScale();
+  animate();
 
   cards.forEach(card => {
 
     card.onclick = () => {
+
+      if (card !== activeCard) {
+        // 中央以外は無効
+        return;
+      }
 
       const code = container.querySelector("#familyCode").value;
 
@@ -70,32 +118,52 @@ export function render(container) {
 
 function injectStyles() {
 
-  if (document.getElementById("loginCardStyles")) return;
+  if (document.getElementById("netflixLoginStyles")) return;
 
   const style = document.createElement("style");
-  style.id = "loginCardStyles";
+  style.id = "netflixLoginStyles";
 
   style.textContent = `
     .profile-slider {
       display:flex;
       overflow-x:auto;
-      gap:20px;
-      padding:20px 0;
+      padding:60px 40px;
       scroll-snap-type:x mandatory;
+      -webkit-overflow-scrolling:touch;
+      perspective:1000px;
     }
 
     .profile-card {
-      min-width:120px;
-      height:140px;
-      background:white;
-      border-radius:20px;
-      box-shadow:0 4px 10px rgba(0,0,0,0.15);
-      text-align:center;
-      padding:20px;
+      min-width:160px;
+      height:200px;
+      margin-left:-32px;
+      background:linear-gradient(180deg,#fff,#f3f3f3);
+      border-radius:22px;
+      box-shadow:0 20px 40px rgba(0,0,0,0.25);
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
       scroll-snap-align:center;
-      transition:transform 0.25s;
+      transform:translateZ(0);
+      will-change:transform;
       cursor:pointer;
-      font-size:20px;
+      transition:box-shadow 0.2s ease;
+    }
+
+    .profile-card:first-child {
+      margin-left:0;
+    }
+
+    .profile-card.active {
+      box-shadow:
+        0 30px 70px rgba(0,0,0,0.35),
+        0 0 30px rgba(255,255,255,0.6);
+    }
+
+    .avatar {
+      font-size:50px;
+      margin-bottom:10px;
     }
   `;
 
