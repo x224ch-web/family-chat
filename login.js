@@ -1,48 +1,25 @@
-const SECRET_CODE = "1234";
-
 export function render(container) {
 
   container.innerHTML = `
-    <div style="padding:20px;">
-      <h3>家族チャットにログイン</h3>
-
-      <input id="familyCode" type="password" placeholder="パスコード"><br><br>
-
-      <select id="userSelect">
-        <option value="">あなたは誰？</option>
-        <option>まよ</option>
-        <option>ほのか</option>
-        <option>りょう</option>
-        <option>しゅん</option>
-        <option>さとし</option>
-      </select><br><br>
-
-      <button id="loginBtn">入室</button>
+    <div id="view" style="padding:20px;">
+      <h2>チャット画面</h2>
     </div>
+
+    <nav class="tabbar">
+      <button data-tab="chat">💬</button>
+      <button data-tab="calendar">📅</button>
+      <button data-tab="tasks">✔</button>
+      <button data-tab="wishlist">🛒</button>
+    </nav>
   `;
 
-  const btn = container.querySelector("#loginBtn");
+  const view = container.querySelector("#view");
+  const buttons = container.querySelectorAll(".tabbar button");
 
-  btn.onclick = () => {
-
-    const code = container.querySelector("#familyCode").value;
-    const user = container.querySelector("#userSelect").value;
-
-    if (code !== SECRET_CODE) {
-      alert("パスコード違います");
-      return;
-    }
-
-    if (!user) {
-      alert("名前を選んでください");
-      return;
-    }
-
-    // ⭐ とにかくchatへ
-    import("./chat.js").then(mod => {
-      mod.render(container);
-    });
-
-  };
+  buttons.forEach(btn => {
+    btn.onclick = () => {
+      view.innerHTML = `<h2>${btn.dataset.tab} タブ</h2>`;
+    };
+  });
 
 }
