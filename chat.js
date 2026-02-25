@@ -43,7 +43,7 @@ push(chatRef, {
       const data = child.val();
 
       const div = document.createElement("div");
-      div.textContent = data.text;
+      div.textContent = `${data.user}：${data.text}`;
 
       messages.appendChild(div);
     });
