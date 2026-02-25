@@ -10,30 +10,15 @@ export function render(container) {
 
       <div class="profile-slider" id="profileSlider">
 
-        <div class="profile-card" data-user="まよ">
-          <div class="avatar">👩</div>
-          <p>まよ</p>
-        </div>
+        <div class="spacer"></div>
 
-        <div class="profile-card" data-user="ほのか">
-          <div class="avatar">👧</div>
-          <p>ほのか</p>
-        </div>
+        ${card("まよ","👩")}
+        ${card("ほのか","👧")}
+        ${card("りょう","👦")}
+        ${card("しゅん","🧑")}
+        ${card("さとし","👨")}
 
-        <div class="profile-card" data-user="りょう">
-          <div class="avatar">👦</div>
-          <p>りょう</p>
-        </div>
-
-        <div class="profile-card" data-user="しゅん">
-          <div class="avatar">🧑</div>
-          <p>しゅん</p>
-        </div>
-
-        <div class="profile-card" data-user="さとし">
-          <div class="avatar">👨</div>
-          <p>さとし</p>
-        </div>
+        <div class="spacer"></div>
 
       </div>
     </div>
@@ -45,6 +30,7 @@ export function render(container) {
   const cards = container.querySelectorAll(".profile-card");
 
   let activeCard = null;
+  let scrollTimer = null;
 
   function animate() {
 
@@ -86,14 +72,43 @@ export function render(container) {
 
   animate();
 
+  // ⭐ 自動センタリング
+  slider.addEventListener("scroll", () => {
+
+    clearTimeout(scrollTimer);
+
+    scrollTimer = setTimeout(() => {
+
+      centerActiveCard();
+
+    }, 120);
+
+  });
+
+  function centerActiveCard() {
+
+    if (!activeCard) return;
+
+    const sliderRect = slider.getBoundingClientRect();
+    const cardRect = activeCard.getBoundingClientRect();
+
+    const offset =
+      (cardRect.left + cardRect.width / 2) -
+      (sliderRect.left + sliderRect.width / 2);
+
+    slider.scrollBy({
+      left: offset,
+      behavior: "smooth"
+    });
+
+  }
+
+  // ⭐ クリック
   cards.forEach(card => {
 
     card.onclick = () => {
 
-      if (card !== activeCard) {
-        // 中央以外は無効
-        return;
-      }
+      if (card !== activeCard) return;
 
       const code = container.querySelector("#familyCode").value;
 
@@ -116,6 +131,15 @@ export function render(container) {
 
 }
 
+function card(name, icon) {
+  return `
+    <div class="profile-card" data-user="${name}">
+      <div class="avatar">${icon}</div>
+      <p>${name}</p>
+    </div>
+  `;
+}
+
 function injectStyles() {
 
   if (document.getElementById("netflixLoginStyles")) return;
@@ -131,6 +155,12 @@ function injectStyles() {
       scroll-snap-type:x mandatory;
       -webkit-overflow-scrolling:touch;
       perspective:1000px;
+      touch-action:pan-x;
+    }
+
+    .spacer {
+      min-width:40vw;
+      flex-shrink:0;
     }
 
     .profile-card {
@@ -149,10 +179,6 @@ function injectStyles() {
       will-change:transform;
       cursor:pointer;
       transition:box-shadow 0.2s ease;
-    }
-
-    .profile-card:first-child {
-      margin-left:0;
     }
 
     .profile-card.active {
