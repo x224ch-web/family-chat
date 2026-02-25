@@ -24,10 +24,13 @@ export function render(container) {
   sendBtn.onclick = () => {
     if (!input.value.trim()) return;
 
-    push(chatRef, {
-      text: input.value,
-      time: Date.now()
-    });
+    const user = localStorage.getItem("familyUser") || "名無し";
+
+push(chatRef, {
+  text: input.value,
+  user,
+  time: Date.now()
+});
 
     input.value = "";
   };
