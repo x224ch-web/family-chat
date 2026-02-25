@@ -1,25 +1,52 @@
+import { getDatabase, ref, push, onValue }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
 export function render(container) {
 
   container.innerHTML = `
-    <div id="view" style="padding:20px;">
-      <h2>チャット画面</h2>
-    </div>
+    <div style="padding:20px;">
+      <h2>家族チャット</h2>
 
-    <nav class="tabbar">
-      <button data-tab="chat">💬</button>
-      <button data-tab="calendar">📅</button>
-      <button data-tab="tasks">✔</button>
-      <button data-tab="wishlist">🛒</button>
-    </nav>
+      <div id="messages" style="height:300px; overflow:auto; border:1px solid #ddd;"></div>
+
+      <input id="msgInput" placeholder="メッセージ">
+      <button id="sendBtn">送信</button>
+    </div>
   `;
 
-  const view = container.querySelector("#view");
-  const buttons = container.querySelectorAll(".tabbar button");
+  const db = getDatabase();
+  const chatRef = ref(db, "chat");
 
-  buttons.forEach(btn => {
-    btn.onclick = () => {
-      view.innerHTML = `<h2>${btn.dataset.tab} タブ</h2>`;
-    };
+  const messages = container.querySelector("#messages");
+  const input = container.querySelector("#msgInput");
+  const sendBtn = container.querySelector("#sendBtn");
+
+  sendBtn.onclick = () => {
+    if (!input.value.trim()) return;
+
+    push(chatRef, {
+      text: input.value,
+      time: Date.now()
+    });
+
+    input.value = "";
+  };
+
+  onValue(chatRef, snapshot => {
+
+    messages.innerHTML = "";
+
+    snapshot.forEach(child => {
+      const data = child.val();
+
+      const div = document.createElement("div");
+      div.textContent = data.text;
+
+      messages.appendChild(div);
+    });
+
+    messages.scrollTop = messages.scrollHeight;
+
   });
 
 }
