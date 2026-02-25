@@ -7,10 +7,18 @@ export function render(container) {
     <div style="padding:20px;">
       <h2>家族チャット</h2>
 
-      <div id="messages" style="height:300px; overflow:auto; border:1px solid #ddd;"></div>
+      <div id="messages" style="
+        height:400px;
+        overflow:auto;
+        border:1px solid #ddd;
+        padding:10px;
+        background:#fafafa;
+      "></div>
 
-      <input id="msgInput" placeholder="メッセージ">
-      <button id="sendBtn">送信</button>
+      <div style="margin-top:10px;">
+        <input id="msgInput" placeholder="メッセージ">
+        <button id="sendBtn">送信</button>
+      </div>
     </div>
   `;
 
@@ -19,18 +27,18 @@ export function render(container) {
 
   const messages = container.querySelector("#messages");
   const input = container.querySelector("#msgInput");
-  const sendBtn = container.querySelector("#sendBtn");
 
-  sendBtn.onclick = () => {
+  const currentUser = localStorage.getItem("familyUser");
+
+  container.querySelector("#sendBtn").onclick = () => {
+
     if (!input.value.trim()) return;
 
-    const user = localStorage.getItem("familyUser") || "名無し";
-
-push(chatRef, {
-  text: input.value,
-  user,
-  time: Date.now()
-});
+    push(chatRef, {
+      text: input.value,
+      user: currentUser,
+      time: Date.now()
+    });
 
     input.value = "";
   };
@@ -40,12 +48,41 @@ push(chatRef, {
     messages.innerHTML = "";
 
     snapshot.forEach(child => {
+
       const data = child.val();
 
-      const div = document.createElement("div");
-      div.textContent = `${data.user}：${data.text}`;
+      const wrapper = document.createElement("div");
+      wrapper.style.display = "flex";
+      wrapper.style.margin = "6px 0";
 
-      messages.appendChild(div);
+      if (data.user === currentUser) {
+        wrapper.style.justifyContent = "flex-end";
+      } else {
+        wrapper.style.justifyContent = "flex-start";
+      }
+
+      const bubble = document.createElement("div");
+
+      bubble.style.padding = "10px 14px";
+      bubble.style.borderRadius = "18px";
+      bubble.style.maxWidth = "70%";
+      bubble.style.wordBreak = "break-word";
+
+      if (data.user === currentUser) {
+        bubble.style.background = "#DCF8C6";
+      } else {
+        bubble.style.background = "#ffffff";
+        bubble.style.border = "1px solid #ddd";
+      }
+
+      bubble.innerHTML = `
+        <div style="font-size:12px;color:#555;">${data.user}</div>
+        <div>${data.text}</div>
+      `;
+
+      wrapper.appendChild(bubble);
+      messages.appendChild(wrapper);
+
     });
 
     messages.scrollTop = messages.scrollHeight;
