@@ -30,8 +30,8 @@ export function render(container) {
   const cards = container.querySelectorAll(".profile-card");
 
   let activeCard = null;
-  let scrollTimer = null;
 
+  // ⭐ カードアニメーション
   function animate() {
 
     const rect = slider.getBoundingClientRect();
@@ -72,29 +72,62 @@ export function render(container) {
 
   animate();
 
-  // ⭐ 自動センタリング
-  slider.addEventListener("scroll", () => {
+  // ⭐ 完全スナップ（速度検知）
+  let lastScrollLeft = slider.scrollLeft;
+  let velocityCheck;
 
-    clearTimeout(scrollTimer);
+  function startSnapWatcher() {
 
-    scrollTimer = setTimeout(() => {
+    cancelAnimationFrame(velocityCheck);
 
-      centerActiveCard();
+    function check() {
 
-    }, 120);
+      const current = slider.scrollLeft;
 
-  });
+      if (Math.abs(current - lastScrollLeft) < 0.5) {
+        snapToNearest();
+        return;
+      }
 
-  function centerActiveCard() {
+      lastScrollLeft = current;
+      velocityCheck = requestAnimationFrame(check);
+    }
 
-    if (!activeCard) return;
+    velocityCheck = requestAnimationFrame(check);
+  }
+
+  slider.addEventListener("scroll", startSnapWatcher);
+
+  // ⭐ 距離ベースセンタリング
+  function snapToNearest() {
 
     const sliderRect = slider.getBoundingClientRect();
-    const cardRect = activeCard.getBoundingClientRect();
+    const center = sliderRect.left + sliderRect.width / 2;
+
+    let nearest = null;
+    let minDistance = Infinity;
+
+    cards.forEach(card => {
+
+      const rect = card.getBoundingClientRect();
+      const cardCenter = rect.left + rect.width / 2;
+
+      const distance = Math.abs(center - cardCenter);
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        nearest = card;
+      }
+
+    });
+
+    if (!nearest) return;
+
+    const rect = nearest.getBoundingClientRect();
 
     const offset =
-      (cardRect.left + cardRect.width / 2) -
-      (sliderRect.left + sliderRect.width / 2);
+      (rect.left + rect.width / 2) -
+      center;
 
     slider.scrollBy({
       left: offset,
@@ -103,7 +136,7 @@ export function render(container) {
 
   }
 
-  // ⭐ クリック
+  // ⭐ 中央カードのみクリック
   cards.forEach(card => {
 
     card.onclick = () => {
