@@ -1,9 +1,6 @@
 import { getDatabase, ref, push, onValue, update }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-import { getStorage, ref as sRef, uploadBytes, getDownloadURL }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-
 export function render(container) {
 
   container.innerHTML = `
@@ -16,7 +13,6 @@ export function render(container) {
 
       <div style="margin-top:10px;">
         <input id="msgInput" placeholder="メッセージ">
-        <input type="file" id="imgInput">
         <button id="sendBtn">送信</button>
       </div>
     </div>
@@ -25,8 +21,6 @@ export function render(container) {
   const db = getDatabase();
   const chatRef = ref(db, "chat");
   const onlineRef = ref(db, "online");
-
-  const storage = getStorage();
 
   const user = localStorage.getItem("familyUser");
   const messages = container.querySelector("#messages");
@@ -42,29 +36,19 @@ export function render(container) {
     container.querySelector("#online").textContent = "オンライン: " + users.join(", ");
   });
 
-  container.querySelector("#sendBtn").onclick = async () => {
+  container.querySelector("#sendBtn").onclick = () => {
 
     const text = container.querySelector("#msgInput").value;
-    const file = container.querySelector("#imgInput").files[0];
-
-    let imageUrl = null;
-
-    if (file) {
-      const fileRef = sRef(storage, "images/" + Date.now());
-      await uploadBytes(fileRef, file);
-      imageUrl = await getDownloadURL(fileRef);
-    }
+    if (!text.trim()) return;
 
     push(chatRef, {
       user,
       text,
-      imageUrl,
       time: Date.now(),
       reads: { [user]: true }
     });
 
     container.querySelector("#msgInput").value = "";
-    container.querySelector("#imgInput").value = "";
   };
 
   onValue(chatRef, snap => {
@@ -76,7 +60,6 @@ export function render(container) {
       const data = child.val();
       const key = child.key;
 
-      // ⭐ 既読登録
       update(ref(db, "chat/" + key + "/reads/" + user), true);
 
       const wrap = document.createElement("div");
@@ -95,8 +78,7 @@ export function render(container) {
 
       bubble.innerHTML = `
         <div style="font-size:12px;color:#555;">${data.user}</div>
-        <div>${data.text || ""}</div>
-        ${data.imageUrl ? `<img src="${data.imageUrl}" style="max-width:200px;">` : ""}
+        <div>${data.text}</div>
         <div style="font-size:10px;color:#999;">${time}</div>
         <div style="font-size:10px;color:#0a0;">既読 ${data.reads ? Object.keys(data.reads).length : 0}</div>
       `;
