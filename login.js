@@ -30,8 +30,10 @@ export function render(container) {
   const cards = container.querySelectorAll(".profile-card");
 
   let activeCard = null;
+  let snapping = false;
+  let scrollTimeout;
 
-  // ⭐ カードアニメーション
+  // ⭐ アニメーション
   function animate() {
 
     const rect = slider.getBoundingClientRect();
@@ -72,34 +74,22 @@ export function render(container) {
 
   animate();
 
-  // ⭐ 完全スナップ（速度検知）
-  let lastScrollLeft = slider.scrollLeft;
-  let velocityCheck;
+  // ⭐ 完全安定スナップ
+  slider.addEventListener("scroll", () => {
 
-  function startSnapWatcher() {
+    if (snapping) return;
 
-    cancelAnimationFrame(velocityCheck);
+    clearTimeout(scrollTimeout);
 
-    function check() {
+    scrollTimeout = setTimeout(() => {
+      snapToNearest();
+    }, 140);
 
-      const current = slider.scrollLeft;
+  });
 
-      if (Math.abs(current - lastScrollLeft) < 0.5) {
-        snapToNearest();
-        return;
-      }
-
-      lastScrollLeft = current;
-      velocityCheck = requestAnimationFrame(check);
-    }
-
-    velocityCheck = requestAnimationFrame(check);
-  }
-
-  slider.addEventListener("scroll", startSnapWatcher);
-
-  // ⭐ 距離ベースセンタリング
   function snapToNearest() {
+
+    snapping = true;
 
     const sliderRect = slider.getBoundingClientRect();
     const center = sliderRect.left + sliderRect.width / 2;
@@ -121,7 +111,10 @@ export function render(container) {
 
     });
 
-    if (!nearest) return;
+    if (!nearest) {
+      snapping = false;
+      return;
+    }
 
     const rect = nearest.getBoundingClientRect();
 
@@ -131,12 +124,27 @@ export function render(container) {
 
     slider.scrollBy({
       left: offset,
-      behavior: "smooth"
+      behavior: "auto"
     });
+
+    // ⭐ ポップ演出
+    nearest.style.transition = "transform 0.2s";
+    nearest.style.transform += " scale(1.05)";
+
+    setTimeout(() => {
+      nearest.style.transition = "";
+    }, 200);
+
+    // ⭐ 振動
+    navigator.vibrate?.(8);
+
+    setTimeout(() => {
+      snapping = false;
+    }, 80);
 
   }
 
-  // ⭐ 中央カードのみクリック
+  // ⭐ クリック
   cards.forEach(card => {
 
     card.onclick = () => {
@@ -185,7 +193,6 @@ function injectStyles() {
       display:flex;
       overflow-x:auto;
       padding:60px 40px;
-      scroll-snap-type:x mandatory;
       -webkit-overflow-scrolling:touch;
       perspective:1000px;
       touch-action:pan-x;
@@ -207,7 +214,6 @@ function injectStyles() {
       flex-direction:column;
       justify-content:center;
       align-items:center;
-      scroll-snap-align:center;
       transform:translateZ(0);
       will-change:transform;
       cursor:pointer;
