@@ -2,8 +2,6 @@ const SECRET_CODE = "1234";
 
 export function render(container) {
 
-  console.log("login render start");
-
   container.innerHTML = `
     <div style="padding:20px;">
       <h3>家族チャットにログイン</h3>
@@ -23,41 +21,28 @@ export function render(container) {
     </div>
   `;
 
-  const btn = document.getElementById("loginBtn");
+  const btn = container.querySelector("#loginBtn");
 
-  btn.addEventListener("click", async () => {
+  btn.onclick = () => {
 
-    btn.disabled = true;
-
-    console.log("login click");
-
-    const code = document.getElementById("familyCode").value;
-    const user = document.getElementById("userSelect").value;
+    const code = container.querySelector("#familyCode").value;
+    const user = container.querySelector("#userSelect").value;
 
     if (code !== SECRET_CODE) {
       alert("パスコード違います");
-      btn.disabled = false;
       return;
     }
 
     if (!user) {
       alert("名前を選んでください");
-      btn.disabled = false;
       return;
     }
 
-    try {
-      const mod = await import("./chat.js");
-      console.log("chat load OK");
-      localStorage.setItem("familyUser", user);
+    // ⭐ とにかくchatへ
+    import("./chat.js").then(mod => {
       mod.render(container);
+    });
 
-    } catch (err) {
-      console.error("chat load error:", err);
-      alert("chat.js 読み込み失敗");
-      btn.disabled = false;
-    }
-
-  });
+  };
 
 }
