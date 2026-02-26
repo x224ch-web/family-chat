@@ -1,114 +1,66 @@
-const SECRET_CODE = "1234";
+import { getAuth, signInWithEmailAndPassword } 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const auth = getAuth();
 
 export function render(container) {
 
   container.innerHTML = `
-    <div class="login-wrapper">
-      <h3>家族チャットにログイン</h3>
-      <input id="familyCode" type="password" placeholder="パスコード"><br><br>
+    <div class="login-screen">
+      <h2>だれがログインしますか？</h2>
 
-      <div class="dock" id="dock">
-        ${card("まよ","👩")}
-        ${card("ほのか","👧")}
-        ${card("りょう","👦")}
-        ${card("しゅん","🧑")}
-        ${card("さとし","👨")}
+      <div class="profile-row">
+        ${profileCard("まよ","👩")}
+        ${profileCard("ほのか","👧")}
+        ${profileCard("りょう","👦")}
+        ${profileCard("しゅん","🧑")}
+        ${profileCard("さとし","👨")}
       </div>
+
+      <input id="password" type="password" placeholder="パスワード">
     </div>
   `;
 
   injectStyles();
 
-  const dock = container.querySelector("#dock");
-  const cards = container.querySelectorAll(".dock-item");
+  const cards = container.querySelectorAll(".profile-card");
 
-  let activeCard = null;
+  const emailMap = {
+    "まよ": "mayo@family.com",
+    "ほのか": "honoka@family.com",
+    "りょう": "ryo@family.com",
+    "しゅん": "shun@family.com",
+    "さとし": "satoshi@family.com"
+  };
 
-  // ⭐ Dockマグニファイ（マウス）
-  dock.addEventListener("mousemove", e => {
-
-    const dockRect = dock.getBoundingClientRect();
-    const mouseX = e.clientX;
-
-    cards.forEach(card => {
-
-      const rect = card.getBoundingClientRect();
-      const cardCenter = rect.left + rect.width / 2;
-
-      const distance = Math.abs(mouseX - cardCenter);
-
-      // ガウス減衰
-      const scale = 1 + Math.exp(-(distance ** 2) / 20000) * 1.2;
-
-      card.style.transform = `scale(${scale})`;
-
-      if (scale > 1.9) {
-        activeCard = card;
-      }
-
-    });
-
-  });
-
-  // ⭐ マウス離れたら戻す
-  dock.addEventListener("mouseleave", () => {
-    cards.forEach(card => {
-      card.style.transform = "scale(1)";
-    });
-    activeCard = null;
-  });
-
-  // ⭐ タッチ対応（中央拡大）
-  dock.addEventListener("touchmove", e => {
-
-    const touchX = e.touches[0].clientX;
-
-    cards.forEach(card => {
-
-      const rect = card.getBoundingClientRect();
-      const center = rect.left + rect.width / 2;
-      const distance = Math.abs(touchX - center);
-
-      const scale = 1 + Math.exp(-(distance ** 2) / 20000) * 1.2;
-
-      card.style.transform = `scale(${scale})`;
-
-      if (scale > 1.9) {
-        activeCard = card;
-      }
-
-    });
-
-  });
-
-  // ⭐ クリック
   cards.forEach(card => {
+    card.addEventListener("click", async () => {
 
-    card.onclick = () => {
+      const user = card.dataset.user;
+      const password = document.getElementById("password").value;
+      const email = emailMap[user];
 
-      if (card !== activeCard) return;
-
-      const code = container.querySelector("#familyCode").value;
-
-      if (code !== SECRET_CODE) {
-        alert("パスコード違います");
+      if (!password) {
+        alert("パスワードを入力してください");
         return;
       }
 
-      const user = card.dataset.user;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        localStorage.setItem("familyUser", user);
+        location.reload();
+      } catch (error) {
+        alert("ログイン失敗：" + error.message);
+      }
 
-      playLoginAnimation(card, user);
-
-    };
-
+    });
   });
-
 }
 
-function card(name, icon) {
+function profileCard(name, icon) {
   return `
-    <div class="dock-item" data-user="${name}">
-      <div class="avatar">${icon}</div>
+    <div class="profile-card" data-user="${name}">
+      <div class="profile-icon">${icon}</div>
       <span>${name}</span>
     </div>
   `;
@@ -116,53 +68,68 @@ function card(name, icon) {
 
 function injectStyles() {
 
-  if (document.getElementById("dockStyles")) return;
+  if (document.getElementById("netflixStyle")) return;
 
   const style = document.createElement("style");
-  style.id = "dockStyles";
+  style.id = "netflixStyle";
 
   style.textContent = `
     body {
       margin:0;
-      background:linear-gradient(180deg,#f5f5f7,#e8e8ec);
+      background:#141414;
+      color:white;
       font-family:sans-serif;
     }
 
-    .login-wrapper {
+    .login-screen {
       text-align:center;
-      padding-top:40px;
+      padding:40px 20px;
     }
 
-    .dock {
-      margin-top:40px;
+    h2 {
+      margin-bottom:40px;
+    }
+
+    .profile-row {
       display:flex;
-      justify-content:center;
-      align-items:flex-end;
       gap:20px;
-      height:180px;
+      overflow-x:auto;
+      padding:10px;
+      scroll-snap-type:x mandatory;
     }
 
-    .dock-item {
-      width:120px;
-      height:120px;
-      background:white;
-      border-radius:24px;
+    .profile-card {
+      flex:0 0 140px;
+      height:220px;
+      background:#222;
+      border-radius:16px;
       display:flex;
       flex-direction:column;
       justify-content:center;
       align-items:center;
-      box-shadow:0 15px 30px rgba(0,0,0,0.2);
-      transition:transform 0.1s ease-out;
       cursor:pointer;
+      transition:transform 0.2s;
+      scroll-snap-align:center;
     }
 
-    .avatar {
-      font-size:40px;
+    .profile-card:hover {
+      transform:scale(1.1);
     }
 
-    .dock-item span {
-      margin-top:8px;
-      font-size:14px;
+    .profile-icon {
+      font-size:60px;
+    }
+
+    .profile-card span {
+      margin-top:15px;
+    }
+
+    input {
+      margin-top:40px;
+      padding:10px;
+      border-radius:8px;
+      border:none;
+      width:200px;
     }
   `;
 
