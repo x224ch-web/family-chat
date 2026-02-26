@@ -1,9 +1,10 @@
 import { getAuth, signInWithEmailAndPassword } 
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const auth = getAuth();
-
 export function render(container) {
+
+  // ✅ initializeApp() が終わった後に呼ばれる
+  const auth = getAuth();
 
   container.innerHTML = `
     <div class="login-screen">
@@ -47,10 +48,15 @@ export function render(container) {
 
       try {
         await signInWithEmailAndPassword(auth, email, password);
+
+        // ログイン成功
         localStorage.setItem("familyUser", user);
+
+        // 🔥 とりあえず再読み込み（後でチャット画面へ遷移可能）
         location.reload();
+
       } catch (error) {
-        alert("ログイン失敗：" + error.message);
+        alert("ログイン失敗：\n" + error.message);
       }
 
     });
@@ -88,19 +94,20 @@ function injectStyles() {
 
     h2 {
       margin-bottom:40px;
+      font-weight:500;
     }
 
     .profile-row {
       display:flex;
       gap:20px;
       overflow-x:auto;
-      padding:10px;
+      padding:20px;
       scroll-snap-type:x mandatory;
     }
 
     .profile-card {
-      flex:0 0 140px;
-      height:220px;
+      flex:0 0 150px;
+      height:240px;
       background:#222;
       border-radius:16px;
       display:flex;
@@ -108,28 +115,30 @@ function injectStyles() {
       justify-content:center;
       align-items:center;
       cursor:pointer;
-      transition:transform 0.2s;
+      transition:transform 0.2s ease;
       scroll-snap-align:center;
     }
 
     .profile-card:hover {
-      transform:scale(1.1);
+      transform:scale(1.08);
     }
 
     .profile-icon {
-      font-size:60px;
+      font-size:70px;
     }
 
     .profile-card span {
       margin-top:15px;
+      font-size:16px;
     }
 
     input {
       margin-top:40px;
-      padding:10px;
+      padding:12px;
       border-radius:8px;
       border:none;
-      width:200px;
+      width:220px;
+      font-size:16px;
     }
   `;
 
