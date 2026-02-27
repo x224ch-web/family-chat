@@ -1,96 +1,119 @@
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  onSnapshot,
-  query,
-  orderBy,
-  serverTimestamp,
-  doc,
-  setDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-import {
-  getAuth,
-  onAuthStateChanged
+import { 
+  getAuth, 
+  signOut 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+import { 
+  getFirestore, 
+  collection, 
+  addDoc, 
+  onSnapshot, 
+  query, 
+  orderBy, 
+  serverTimestamp 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import { render as loginRender } from "./login.js";
 
 export function render(container) {
 
-  const auth = getAuth();
   const db = getFirestore();
-
+  const auth = getAuth();
   const user = localStorage.getItem("familyUser");
 
-  // 🔐 ログイン確認
-  onAuthStateChanged(auth, (firebaseUser) => {
-    if (!firebaseUser || !user) {
-      window.location.href = "index.html";
-    }
-  });
-
   container.innerHTML = `
-    <div style="padding:20px;">
+    <div style="padding:20px; position:relative;">
       <h2>家族チャット</h2>
 
-      <div id="online" style="font-size:12px;color:green;"></div>
+      <div style="
+        position:absolute;
+        top:20px;
+        right:20px;
+        display:flex;
+        gap:10px;
+        align-items:center;
+      ">
+        <span style="font-size:14px;color:#aaa;">${user}</span>
+        <button id="logoutBtn" style="
+          background:#333;
+          color:white;
+          border:none;
+          padding:6px 12px;
+          border-radius:8px;
+          cursor:pointer;
+        ">
+          ログアウト
+        </button>
+      </div>
 
-      <div id="messages" style="height:400px;overflow:auto;border:1px solid #ddd;padding:10px;background:#fafafa;"></div>
+      <div id="messages" style="
+        height:400px;
+        overflow:auto;
+        border:1px solid #333;
+        padding:10px;
+        background:#1e1e1e;
+        margin-top:20px;
+      "></div>
 
       <div style="margin-top:10px;">
-        <input id="msgInput" placeholder="メッセージ">
-        <button id="sendBtn">送信</button>
+        <input id="msgInput" placeholder="メッセージ" style="
+          padding:8px;
+          width:70%;
+          border-radius:6px;
+          border:none;
+        ">
+        <button id="sendBtn" style="
+          padding:8px 14px;
+          border:none;
+          border-radius:6px;
+          background:#444;
+          color:white;
+          cursor:pointer;
+        ">
+          送信
+        </button>
       </div>
     </div>
   `;
 
-  const messagesDiv = container.querySelector("#messages");
-  const sendBtn = container.querySelector("#sendBtn");
-  const input = container.querySelector("#msgInput");
-
-  // ⭐ オンライン登録（Firestore）
-  setDoc(doc(db, "online", user), {
-    name: user,
-    updatedAt: serverTimestamp()
+  // 🔥 ログアウト処理
+  document.getElementById("logoutBtn").addEventListener("click", async () => {
+    await signOut(auth);
+    localStorage.removeItem("familyUser");
+    loginRender(container);
   });
 
-  // ⭐ オンライン表示
-  onSnapshot(collection(db, "online"), (snapshot) => {
-    const users = snapshot.docs.map(doc => doc.data().name);
-    container.querySelector("#online").textContent =
-      "オンライン: " + users.join(", ");
-  });
+  const messagesDiv = document.getElementById("messages");
+  const messagesRef = collection(db, "messages");
+  const q = query(messagesRef, orderBy("createdAt"));
 
-  // ⭐ メッセージ表示
-  const q = query(
-    collection(db, "messages"),
-    orderBy("createdAt")
-  );
-
-  onSnapshot(q, (snapshot) => {
+  // 🔥 リアルタイム表示
+  onSnapshot(q, snapshot => {
     messagesDiv.innerHTML = "";
-
     snapshot.forEach(doc => {
       const data = doc.data();
-
       const msg = document.createElement("div");
-      msg.textContent = data.user + "： " + data.text;
 
+      msg.style.marginBottom = "8px";
+      msg.innerHTML = `
+        <strong>${data.user}</strong>: ${data.text}
+      `;
       messagesDiv.appendChild(msg);
     });
-
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
   });
 
-  // ⭐ 送信
-  sendBtn.addEventListener("click", async () => {
+  // 🔥 送信処理
+  document.getElementById("sendBtn").addEventListener("click", async () => {
 
-    if (!input.value.trim()) return;
+    const input = document.getElementById("msgInput");
+    const text = input.value.trim();
 
-    await addDoc(collection(db, "messages"), {
-      text: input.value,
+    if (!text) return;
+
+    await addDoc(messagesRef, {
       user: user,
+      text: text,
       createdAt: serverTimestamp()
     });
 
