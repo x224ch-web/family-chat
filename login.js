@@ -4,16 +4,18 @@ import {
   onAuthStateChanged 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+import { render as chatRender } from "./chat.js";
+
 export function render(container) {
 
   const auth = getAuth();
 
-  // 🔥 すでにログイン済みなら自動スキップ
-  onAuthStateChanged(auth, (user) => {
+  // 🔥 すでにログイン済みなら自動でチャット表示
+  onAuthStateChanged(auth, (firebaseUser) => {
     const savedUser = localStorage.getItem("familyUser");
 
-    if (user && savedUser) {
-      window.location.href = "chat.html";
+    if (firebaseUser && savedUser) {
+      chatRender(container);
     }
   });
 
@@ -44,11 +46,11 @@ export function render(container) {
         // 🔥 匿名ログイン
         await signInAnonymously(auth);
 
-        // 🔥 家族名を保存
+        // 🔥 家族名保存
         localStorage.setItem("familyUser", userName);
 
-        // 🔥 チャットへ
-        window.location.href = "chat.html";
+        // 🔥 ページ遷移せずチャット表示
+        chatRender(container);
 
       } catch (error) {
         alert("ログイン失敗：\n" + error.message);
@@ -66,7 +68,6 @@ function profileCard(name, icon) {
     </div>
   `;
 }
-
 
 function injectStyles() {
 
@@ -125,15 +126,6 @@ function injectStyles() {
 
     .profile-card span {
       margin-top:15px;
-      font-size:16px;
-    }
-
-    input {
-      margin-top:40px;
-      padding:12px;
-      border-radius:8px;
-      border:none;
-      width:220px;
       font-size:16px;
     }
   `;
