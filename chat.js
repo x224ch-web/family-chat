@@ -21,7 +21,7 @@ export function render(container) {
   const auth = getAuth();
   const user = localStorage.getItem("familyUser");
   // 🔔 639Hz通知音
-  const notificationSound = new Audio("notification.mp3");
+  const notificationSound = new Audio("639hz.mp3");
   notificationSound.volume = 1.0;
   container.innerHTML = `
     <div style="padding:20px; position:relative;">
