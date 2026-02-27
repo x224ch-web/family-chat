@@ -1,10 +1,21 @@
-import { getAuth, signInWithEmailAndPassword } 
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { 
+  getAuth, 
+  signInAnonymously, 
+  onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 export function render(container) {
 
-  // ✅ initializeApp() が終わった後に呼ばれる
   const auth = getAuth();
+
+  // 🔥 すでにログイン済みなら自動スキップ
+  onAuthStateChanged(auth, (user) => {
+    const savedUser = localStorage.getItem("familyUser");
+
+    if (user && savedUser) {
+      window.location.href = "chat.html";
+    }
+  });
 
   container.innerHTML = `
     <div class="login-screen">
@@ -17,8 +28,6 @@ export function render(container) {
         ${profileCard("しゅん","🧑")}
         ${profileCard("さとし","👨")}
       </div>
-
-      <input id="password" type="password" placeholder="パスワード">
     </div>
   `;
 
@@ -26,34 +35,20 @@ export function render(container) {
 
   const cards = container.querySelectorAll(".profile-card");
 
-  const emailMap = {
-    "まよ": "mayo@family.com",
-    "ほのか": "honoka@family.com",
-    "りょう": "ryo@family.com",
-    "しゅん": "shun@family.com",
-    "さとし": "satoshi@family.com"
-  };
-
   cards.forEach(card => {
     card.addEventListener("click", async () => {
 
-      const user = card.dataset.user;
-      const password = document.getElementById("password").value;
-      const email = emailMap[user];
-
-      if (!password) {
-        alert("パスワードを入力してください");
-        return;
-      }
+      const userName = card.dataset.user;
 
       try {
-        await signInWithEmailAndPassword(auth, email, password);
+        // 🔥 匿名ログイン
+        await signInAnonymously(auth);
 
-        // ログイン成功
-        localStorage.setItem("familyUser", user);
+        // 🔥 家族名を保存
+        localStorage.setItem("familyUser", userName);
 
-        // 🔥 とりあえず再読み込み（後でチャット画面へ遷移可能）
-        location.reload();
+        // 🔥 チャットへ
+        window.location.href = "chat.html";
 
       } catch (error) {
         alert("ログイン失敗：\n" + error.message);
@@ -61,6 +56,15 @@ export function render(container) {
 
     });
   });
+}
+
+function profileCard(name, icon) {
+  return `
+    <div class="profile-card" data-user="${name}">
+      <div class="profile-icon">${icon}</div>
+      <span>${name}</span>
+    </div>
+  `;
 }
 
 function profileCard(name, icon) {
