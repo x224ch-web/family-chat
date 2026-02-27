@@ -67,14 +67,6 @@ function profileCard(name, icon) {
   `;
 }
 
-function profileCard(name, icon) {
-  return `
-    <div class="profile-card" data-user="${name}">
-      <div class="profile-icon">${icon}</div>
-      <span>${name}</span>
-    </div>
-  `;
-}
 
 function injectStyles() {
 
