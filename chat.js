@@ -1,7 +1,34 @@
-import { getDatabase, ref, push, onValue, update }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  onSnapshot,
+  query,
+  orderBy,
+  serverTimestamp,
+  doc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
 
 export function render(container) {
+
+  const auth = getAuth();
+  const db = getFirestore();
+
+  const user = localStorage.getItem("familyUser");
+
+  // 🔐 ログイン確認
+  onAuthStateChanged(auth, (firebaseUser) => {
+    if (!firebaseUser || !user) {
+      window.location.href = "index.html";
+    }
+  });
 
   container.innerHTML = `
     <div style="padding:20px;">
@@ -18,78 +45,55 @@ export function render(container) {
     </div>
   `;
 
-  const db = getDatabase();
-  const chatRef = ref(db, "chat");
-  const onlineRef = ref(db, "online");
+  const messagesDiv = container.querySelector("#messages");
+  const sendBtn = container.querySelector("#sendBtn");
+  const input = container.querySelector("#msgInput");
 
-  const user = localStorage.getItem("familyUser");
-  const messages = container.querySelector("#messages");
-
-  // ⭐ オンライン登録
-  update(ref(db, "online/" + user), { online: true });
-
-  onValue(onlineRef, snap => {
-    const users = [];
-    snap.forEach(c => {
-      if (c.val().online) users.push(c.key);
-    });
-    container.querySelector("#online").textContent = "オンライン: " + users.join(", ");
+  // ⭐ オンライン登録（Firestore）
+  setDoc(doc(db, "online", user), {
+    name: user,
+    updatedAt: serverTimestamp()
   });
 
-  container.querySelector("#sendBtn").onclick = () => {
-
-    const text = container.querySelector("#msgInput").value;
-    if (!text.trim()) return;
-
-    push(chatRef, {
-      user,
-      text,
-      time: Date.now(),
-      reads: { [user]: true }
-    });
-
-    container.querySelector("#msgInput").value = "";
-  };
-
-  onValue(chatRef, snap => {
-
-    messages.innerHTML = "";
-
-    snap.forEach(child => {
-
-      const data = child.val();
-      const key = child.key;
-
-      update(ref(db, "chat/" + key + "/reads/" + user), true);
-
-      const wrap = document.createElement("div");
-      wrap.style.display = "flex";
-      wrap.style.margin = "6px 0";
-      wrap.style.justifyContent = data.user === user ? "flex-end" : "flex-start";
-
-      const bubble = document.createElement("div");
-      bubble.style.padding = "10px";
-      bubble.style.borderRadius = "18px";
-      bubble.style.maxWidth = "70%";
-      bubble.style.background = data.user === user ? "#DCF8C6" : "#fff";
-      bubble.style.border = "1px solid #ddd";
-
-      const time = new Date(data.time).toLocaleTimeString();
-
-      bubble.innerHTML = `
-        <div style="font-size:12px;color:#555;">${data.user}</div>
-        <div>${data.text}</div>
-        <div style="font-size:10px;color:#999;">${time}</div>
-        <div style="font-size:10px;color:#0a0;">既読 ${data.reads ? Object.keys(data.reads).length : 0}</div>
-      `;
-
-      wrap.appendChild(bubble);
-      messages.appendChild(wrap);
-
-    });
-
-    messages.scrollTop = messages.scrollHeight;
-
+  // ⭐ オンライン表示
+  onSnapshot(collection(db, "online"), (snapshot) => {
+    const users = snapshot.docs.map(doc => doc.data().name);
+    container.querySelector("#online").textContent =
+      "オンライン: " + users.join(", ");
   });
 
+  // ⭐ メッセージ表示
+  const q = query(
+    collection(db, "messages"),
+    orderBy("createdAt")
+  );
+
+  onSnapshot(q, (snapshot) => {
+    messagesDiv.innerHTML = "";
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+
+      const msg = document.createElement("div");
+      msg.textContent = data.user + "： " + data.text;
+
+      messagesDiv.appendChild(msg);
+    });
+
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  });
+
+  // ⭐ 送信
+  sendBtn.addEventListener("click", async () => {
+
+    if (!input.value.trim()) return;
+
+    await addDoc(collection(db, "messages"), {
+      text: input.value,
+      user: user,
+      createdAt: serverTimestamp()
+    });
+
+    input.value = "";
+  });
 }
