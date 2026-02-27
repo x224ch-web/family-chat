@@ -10,7 +10,7 @@ export function render(container) {
 
   const auth = getAuth();
 
-  // 🔥 すでにログイン済みなら自動でチャット表示
+  // 🔥 自動ログイン判定
   onAuthStateChanged(auth, (firebaseUser) => {
     const savedUser = localStorage.getItem("familyUser");
 
@@ -43,13 +43,10 @@ export function render(container) {
       const userName = card.dataset.user;
 
       try {
-        // 🔥 匿名ログイン
         await signInAnonymously(auth);
 
-        // 🔥 家族名保存
         localStorage.setItem("familyUser", userName);
 
-        // 🔥 ページ遷移せずチャット表示
         chatRender(container);
 
       } catch (error) {
