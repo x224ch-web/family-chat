@@ -118,36 +118,127 @@ onSnapshot(q, snapshot => {
     }
   }
 
-  lastMessageCount = currentCount;
+  import {
+  getFirestore,
+  collection,
+  addDoc,
+  onSnapshot,
+  query,
+  orderBy,
+  serverTimestamp,
+  doc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  messagesDiv.innerHTML = "";
+import { getAuth, signOut } 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    const msg = document.createElement("div");
+export function render(container) {
 
-    msg.style.marginBottom = "8px";
-    msg.innerHTML = `<strong>${data.user}</strong>: ${data.text}`;
-    messagesDiv.appendChild(msg);
+  const db = getFirestore();
+  const auth = getAuth();
+  const user = localStorage.getItem("familyUser");
+
+  if (!user) {
+    container.innerHTML = "<h2>ログインしてください</h2>";
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="chat-wrapper">
+      <div class="chat-header">
+        <h2>家族チャット</h2>
+        <button id="logoutBtn">ログアウト</button>
+      </div>
+
+      <div id="messages" class="messages"></div>
+
+      <div class="input-area">
+        <input id="msgInput" placeholder="メッセージ">
+        <button id="sendBtn">送信</button>
+      </div>
+    </div>
+  `;
+
+  const messagesEl = container.querySelector("#messages");
+  const input = container.querySelector("#msgInput");
+
+  const chatRef = collection(db, "chat");
+  const q = query(chatRef, orderBy("createdAt"));
+
+  // 🔥 リアルタイム取得
+  onSnapshot(q, async (snapshot) => {
+
+    messagesEl.innerHTML = "";
+
+    snapshot.forEach(docSnap => {
+
+      const data = docSnap.data();
+      const isMe = data.user === user;
+
+      const time = data.createdAt
+        ? new Date(data.createdAt.seconds * 1000)
+            .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+        : "";
+
+      messagesEl.innerHTML += `
+        <div class="message-row ${isMe ? "me" : "other"}">
+          
+          ${!isMe ? `<div class="meta">${data.user}</div>` : ""}
+
+          <div class="bubble">
+            ${data.text}
+          </div>
+
+          <div class="info">
+            ${isMe ? `<span class="read">${data.read ? "既読" : ""}</span>` : ""}
+            <span class="time">${time}</span>
+          </div>
+
+        </div>
+      `;
+
+      // 🔥 他人メッセージを既読更新
+      if (!isMe && !data.read) {
+        updateDoc(doc(db, "chat", docSnap.id), {
+          read: true
+        });
+      }
+
+    });
+
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+
   });
 
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
-});
+  // 🔥 送信
+  container.querySelector("#sendBtn").addEventListener("click", async () => {
 
-  // 🔥 送信処理
-  document.getElementById("sendBtn").addEventListener("click", async () => {
+    if (!input.value.trim()) return;
 
-    const input = document.getElementById("msgInput");
-    const text = input.value.trim();
-
-    if (!text) return;
-
-    await addDoc(messagesRef, {
+    await addDoc(chatRef, {
       user: user,
-      text: text,
-      createdAt: serverTimestamp()
+      text: input.value,
+      createdAt: serverTimestamp(),
+      read: false
     });
 
     input.value = "";
   });
+
+  // Enter送信
+  input.addEventListener("keypress", e => {
+    if (e.key === "Enter") {
+      container.querySelector("#sendBtn").click();
+    }
+  });
+
+  // ログアウト
+  container.querySelector("#logoutBtn").addEventListener("click", async () => {
+    await signOut(auth);
+    localStorage.removeItem("familyUser");
+    location.reload();
+  });
 }
+
+ 
