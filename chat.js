@@ -23,6 +23,14 @@ export function render(container) {
   // 🔔 639Hz通知音
   const notificationSound = new Audio("639hz.mp3");
   notificationSound.volume = 1.0;
+  // 🔓 最初のタップで音を有効化
+document.addEventListener("click", () => {
+  notificationSound.play().then(() => {
+    notificationSound.pause();
+    notificationSound.currentTime = 0;
+  }).catch(() => {});
+}, { once: true });
+  
   container.innerHTML = `
     <div style="padding:20px; position:relative;">
       <h2>家族チャット</h2>
