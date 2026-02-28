@@ -18,6 +18,10 @@ export function render(container) {
   if ("Notification" in window) {
      Notification.requestPermission();
   }
+   // 🎵 639Hz音
+  const notificationSound = new Audio("639hz.mp3");
+  notificationSound.volume = 1.0;
+
   const db = getFirestore();
   const auth = getAuth();
   const user = localStorage.getItem("familyUser");
