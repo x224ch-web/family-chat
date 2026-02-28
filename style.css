@@ -57,6 +57,7 @@ body {
   flex:1;
   overflow-y:auto;
   margin:15px 0;
+  min-height:0;           /* ← これ重要 */
 }
 
 /* ===== メッセージ ===== */
