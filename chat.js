@@ -112,6 +112,7 @@ onSnapshot(q, snapshot => {
 
     // 🔥 自分の送信は鳴らさない
     if (latestData.user !== user) {
+      notificationSound.currentTime = 0;
       notificationSound.play();
       showLocalNotification(latestData.user, latestData.text);
     }
