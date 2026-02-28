@@ -21,7 +21,13 @@ export function render(container) {
    // 🎵 639Hz音
   const notificationSound = new Audio("639hz.mp3");
   notificationSound.volume = 1.0;
-
+  // 🎵 最初のタップで音を解放
+document.addEventListener("click", () => {
+  notificationSound.play().then(() => {
+    notificationSound.pause();
+    notificationSound.currentTime = 0;
+  }).catch(() => {});
+}, { once: true });
   const db = getFirestore();
   const auth = getAuth();
   const user = localStorage.getItem("familyUser");
