@@ -22,6 +22,7 @@ export function render(container) {
   const user = localStorage.getItem("familyUser");
   // 🔔 639Hz通知音
   const notificationSound = new Audio("639hz.mp3");
+  notificationSound.preload = "auto";
   notificationSound.volume = 1.0;
   // 🔓 最初のタップで音を有効化
 document.addEventListener("click", () => {
