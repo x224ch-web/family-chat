@@ -89,21 +89,40 @@ export function render(container) {
   const messagesRef = collection(db, "messages");
   const q = query(messagesRef, orderBy("createdAt"));
 
-  // 🔥 リアルタイム表示
-  onSnapshot(q, snapshot => {
-    messagesDiv.innerHTML = "";
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      const msg = document.createElement("div");
+  let lastMessageCount = 0;
 
-      msg.style.marginBottom = "8px";
-      msg.innerHTML = `
-        <strong>${data.user}</strong>: ${data.text}
-      `;
-      messagesDiv.appendChild(msg);
-    });
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+onSnapshot(q, snapshot => {
+
+  const currentCount = snapshot.size;
+
+  // 🔥 新着判定（初回は鳴らさない）
+  if (lastMessageCount !== 0 && currentCount > lastMessageCount) {
+
+    const latestDoc = snapshot.docs[snapshot.docs.length - 1];
+    const latestData = latestDoc.data();
+
+    // 🔥 自分の送信は鳴らさない
+    if (latestData.user !== user) {
+      notificationSound.play();
+      showLocalNotification(latestData.user, latestData.text);
+    }
+  }
+
+  lastMessageCount = currentCount;
+
+  messagesDiv.innerHTML = "";
+
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    const msg = document.createElement("div");
+
+    msg.style.marginBottom = "8px";
+    msg.innerHTML = `<strong>${data.user}</strong>: ${data.text}`;
+    messagesDiv.appendChild(msg);
   });
+
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+});
 
   // 🔥 送信処理
   document.getElementById("sendBtn").addEventListener("click", async () => {
