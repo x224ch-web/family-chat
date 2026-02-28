@@ -14,7 +14,10 @@ import { getAuth, signOut }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 export function render(container) {
-
+   // 🔔 通知許可をもらう
+  if ("Notification" in window) {
+     Notification.requestPermission();
+  }
   const db = getFirestore();
   const auth = getAuth();
   const user = localStorage.getItem("familyUser");
@@ -50,7 +53,27 @@ export function render(container) {
   onSnapshot(q, async (snapshot) => {
 
     messagesEl.innerHTML = "";
+// 🔔 新しく追加されたメッセージだけ通知
+snapshot.docChanges().forEach(change => {
 
+  if (change.type === "added") {
+
+    const data = change.doc.data();
+    const isMe = data.user === user;
+
+    if (!isMe && Notification.permission === "granted") {
+      new Notification(data.user + " からメッセージ", {
+        body: data.text,
+        icon: "icon.png"
+      });
+
+      notificationSound.currentTime = 0;
+      notificationSound.play();
+    }
+
+  }
+
+});
     snapshot.forEach(docSnap => {
 
       const data = docSnap.data();
