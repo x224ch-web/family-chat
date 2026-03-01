@@ -81,7 +81,26 @@
   </div>
 </div>
 
+
+  <!-- Firebase CDN -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyC8qlv0imeiH6Vw_qu8295D_wno1xvEpKc",
+    authDomain: "x224ch-c937f.firebaseapp.com",
+    databaseURL: "https://x224ch-c937f-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "x224ch-c937f",
+    storageBucket: "x224ch-c937f.firebasestorage.app",
+    messagingSenderId: "217831065440",
+    appId: "1:217831065440:web:c15038f05ede6973448005"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+</script>
+
 <script src="login.js"></script>
-<script src="chat.js"></script>
+<script src="chat.js?v=3"></script>
 </body>
 </html>
