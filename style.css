@@ -1,8 +1,12 @@
+/* ===== 基本 ===== */
+
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  
+  background: #000;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 body {
@@ -21,6 +25,8 @@ body {
   overflow: auto;
 }
 
+/* ===== タブバー ===== */
+
 .tabbar {
   height: 60px;
   background: #fff;
@@ -35,124 +41,24 @@ body {
   background: none;
   font-size: 22px;
 }
-/* ===== レイアウト ===== */
 
-.chat-wrapper {
-  padding:20px;
-  background:#000;
-  color:white;
-  flex:1;                 /* ← ここ重要 */
-  display:flex;
-  flex-direction:column;
-  min-height:0;           /* ← 追加（スクロール安定） */
-}
+/* ===== ログイン画面 ===== */
 
-.chat-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.messages {
-  flex:1;
-  overflow-y:auto;
-  margin:15px 0;
-  min-height:0;           /* ← これ重要 */
-}
-
-/* ===== メッセージ ===== */
-
-.message-row {
-  display:flex;
-  flex-direction:column;
-  max-width:70%;
-  margin:8px 0;
-}
-
-.message-row.other {
-  align-items:flex-start;
-}
-
-.message-row.me {
-  align-items:flex-end;
-  margin-left:auto;
-}
-
-.bubble {
-  padding:10px 14px;
-  border-radius:18px;
-  font-size:14px;
-  word-break:break-word;
-}
-
-.message-row.other .bubble {
-  background:#2a2a2a;
-  color:white;
-}
-
-.message-row.me .bubble {
-  background:#1db954;
-  color:black;
-}
-
-.meta {
-  font-size:11px;
-  margin-bottom:3px;
-  opacity:0.6;
-}
-
-.info {
-  font-size:10px;
-  margin-top:3px;
-  display:flex;
-  gap:6px;
-  opacity:0.6;
-}
-
-.read {
-  color:#4fc3f7;
-}
-
-.time {
-  color:#aaa;
-}
-
-/* ===== 入力欄 ===== */
-
-.input-area {
-  display:flex;
-  gap:8px;
-}
-
-.input-area input {
-  flex:1;
-  padding:10px;
-  border-radius:8px;
-  border:none;
-}
-
-.input-area button {
-  padding:10px 14px;
-  border:none;
-  border-radius:8px;
-  background:#1db954;
-  cursor:pointer;
-}
-body {
-  margin: 0;
-  background: #000;
-  color: #fff;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-}
-
-/* 上余白 */
 .login-title {
   padding-top: 11dvh;
   padding-left: 24px;
   padding-right: 24px;
 }
 
-/* カード */
+.card-container {
+  display: flex;
+  gap: 16px;
+  padding: 0 24px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
 .card {
   flex: 0 0 82%;
   height: 65dvh;
@@ -169,7 +75,6 @@ body {
   box-shadow: 0 10px 30px rgba(0,0,0,0.45);
 }
 
-/* 写真 */
 .avatar img {
   width: 118px;
   height: 118px;
@@ -179,7 +84,6 @@ body {
   box-shadow: 0 8px 20px rgba(0,0,0,0.45);
 }
 
-/* 名前 */
 .card-name {
   font-size: 30px;
   font-weight: 600;
@@ -187,7 +91,6 @@ body {
   margin-bottom: 10px;
 }
 
-/* メモ */
 .card-memo {
   font-size: 14.5px;
   color: #8e8e93;
@@ -197,7 +100,104 @@ body {
   min-height: 22px;
 }
 
-/* プレースホルダー表示 */
 .card-memo.empty {
   opacity: 0.5;
+}
+
+/* ===== チャット画面 ===== */
+
+.chat-wrapper {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  margin: 15px 0;
+  min-height: 0;
+}
+
+.message-row {
+  display: flex;
+  flex-direction: column;
+  max-width: 70%;
+  margin: 8px 0;
+}
+
+.message-row.other {
+  align-items: flex-start;
+}
+
+.message-row.me {
+  align-items: flex-end;
+  margin-left: auto;
+}
+
+.bubble {
+  padding: 10px 14px;
+  border-radius: 18px;
+  font-size: 14px;
+  word-break: break-word;
+}
+
+.message-row.other .bubble {
+  background: #2a2a2a;
+  color: white;
+}
+
+.message-row.me .bubble {
+  background: #1db954;
+  color: black;
+}
+
+.meta {
+  font-size: 11px;
+  margin-bottom: 3px;
+  opacity: 0.6;
+}
+
+.info {
+  font-size: 10px;
+  margin-top: 3px;
+  display: flex;
+  gap: 6px;
+  opacity: 0.6;
+}
+
+.read {
+  color: #4fc3f7;
+}
+
+.time {
+  color: #aaa;
+}
+
+.input-area {
+  display: flex;
+  gap: 8px;
+}
+
+.input-area input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+}
+
+.input-area button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  background: #1db954;
+  cursor: pointer;
 }
