@@ -90,3 +90,71 @@ html, body {
 .chat-wrapper{
   padding:20px;
 }
+/* ===== チャットレイアウト ===== */
+
+.chat-wrapper{
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  height:100dvh;
+  box-sizing:border-box;
+}
+
+.messages{
+  flex:1;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  padding:10px 0;
+}
+
+/* 行 */
+.message-row{
+  display:flex;
+  align-items:flex-end;   /* ← 吹き出し下揃え */
+  max-width:80%;
+}
+
+/* 他人 */
+.message-row.other{
+  align-self:flex-start;
+  flex-direction:row;
+}
+
+/* 自分 */
+.message-row.me{
+  align-self:flex-end;
+  flex-direction:row-reverse;
+}
+
+/* 吹き出し */
+.bubble{
+  padding:12px 16px;
+  border-radius:20px;
+  font-size:15px;
+  word-break:break-word;
+  max-width:100%;
+}
+
+/* 他人バブル */
+.message-row.other .bubble{
+  background:#2a2a2a;
+  color:white;
+  border-bottom-left-radius:6px;
+}
+
+/* 自分バブル */
+.message-row.me .bubble{
+  background:#1db954;
+  color:black;
+  border-bottom-right-radius:6px;
+}
+
+/* 時刻 */
+.meta{
+  font-size:11px;
+  opacity:.6;
+  margin:0 6px;
+  white-space:nowrap;
+}
