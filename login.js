@@ -1,131 +1,75 @@
-import { 
-  getAuth, 
-  signInAnonymously, 
-  onAuthStateChanged 
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+// ===== メモ初期化 =====
+document.querySelectorAll(".card-memo").forEach(memo => {
 
-import { render as chatRender } from "./chat.js";
+  const user = memo.closest(".card").dataset.user;
+  const saved = localStorage.getItem("memo_" + user);
 
-export function render(container) {
+  if (saved) {
+    memo.innerText = saved;
+    memo.classList.remove("empty");
+  } else {
+    memo.innerText = memo.dataset.placeholder;
+  }
 
-  const auth = getAuth();
-
-  // 🔥 自動ログイン判定
-  onAuthStateChanged(auth, (firebaseUser) => {
-    const savedUser = localStorage.getItem("familyUser");
-
-    if (firebaseUser && savedUser) {
-      chatRender(container);
+  memo.addEventListener("focus", () => {
+    if (memo.classList.contains("empty")) {
+      memo.innerText = "";
+      memo.classList.remove("empty");
     }
   });
 
-  container.innerHTML = `
-    <div class="login-screen">
-      <h2>だれがログインしますか？</h2>
-
-      <div class="profile-row">
-        ${profileCard("まよ","👩")}
-        ${profileCard("ほのか","👧")}
-        ${profileCard("りょう","👦")}
-        ${profileCard("しゅん","🧑")}
-        ${profileCard("さとし","👨")}
-      </div>
-    </div>
-  `;
-
-  injectStyles();
-
-  const cards = container.querySelectorAll(".profile-card");
-
-  cards.forEach(card => {
-    card.addEventListener("click", async () => {
-
-      const userName = card.dataset.user;
-
-      try {
-        await signInAnonymously(auth);
-
-        localStorage.setItem("familyUser", userName);
-
-        chatRender(container);
-
-      } catch (error) {
-        alert("ログイン失敗：\n" + error.message);
-      }
-
-    });
+  memo.addEventListener("blur", () => {
+    const text = memo.innerText.trim();
+    if (text === "") {
+      memo.innerText = memo.dataset.placeholder;
+      memo.classList.add("empty");
+      localStorage.removeItem("memo_" + user);
+    } else {
+      localStorage.setItem("memo_" + user, text);
+    }
   });
+
+});
+
+
+// ===== ログイン処理 =====
+document.querySelectorAll(".card").forEach(card => {
+
+  card.addEventListener("click", (e) => {
+
+    // メモを押したらログインしない
+    if (e.target.closest(".card-memo")) return;
+
+    const user = card.dataset.user;
+    localStorage.setItem("currentUser", user);
+    showChat(user);
+  });
+
+});
+
+function showChat(user) {
+
+  document.querySelector(".login-title").style.display = "none";
+  document.querySelector(".card-container").style.display = "none";
+
+  document.getElementById("chat-view").style.display = "block";
+  document.getElementById("chat-username").innerText = user;
 }
 
-function profileCard(name, icon) {
-  return `
-    <div class="profile-card" data-user="${name}">
-      <div class="profile-icon">${icon}</div>
-      <span>${name}</span>
-    </div>
-  `;
-}
 
-function injectStyles() {
+// ===== ログアウト =====
+document.getElementById("logoutBtn").addEventListener("click", () => {
 
-  if (document.getElementById("netflixStyle")) return;
+  localStorage.removeItem("currentUser");
 
-  const style = document.createElement("style");
-  style.id = "netflixStyle";
+  document.getElementById("chat-view").style.display = "none";
+  document.querySelector(".login-title").style.display = "block";
+  document.querySelector(".card-container").style.display = "flex";
+});
 
-  style.textContent = `
-    body {
-      margin:0;
-      background:#141414;
-      color:white;
-      font-family:sans-serif;
-    }
 
-    .login-screen {
-      text-align:center;
-      padding:40px 20px;
-    }
-
-    h2 {
-      margin-bottom:40px;
-      font-weight:500;
-    }
-
-    .profile-row {
-      display:flex;
-      gap:20px;
-      overflow-x:auto;
-      padding:20px;
-      scroll-snap-type:x mandatory;
-    }
-
-    .profile-card {
-      flex:0 0 150px;
-      height:240px;
-      background:#222;
-      border-radius:16px;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      cursor:pointer;
-      transition:transform 0.2s ease;
-      scroll-snap-align:center;
-    }
-
-    .profile-card:hover {
-      transform:scale(1.08);
-    }
-
-    .profile-icon {
-      font-size:70px;
-    }
-
-    .profile-card span {
-      margin-top:15px;
-      font-size:16px;
-    }
-  `;
-
-  document.head.appendChild(style);
+// ===== 再読み込み対応 =====
+const savedUser = localStorage.getItem("currentUser");
+if (savedUser) {
+  showChat(savedUser);
 }
