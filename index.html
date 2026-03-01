@@ -1,87 +1,96 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Family App</title>
-
-  <!-- ⭐ 追加 -->
-  <link rel="manifest" href="manifest.json?v=2">
-
-  <!-- iPhone用（おすすめ） -->
-  <link rel="apple-touch-icon" href="icon.png">
-
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-<div class="login-title">
-  だれがログインしますか？
-</div>
 
-<div class="card-container">
+  <!-- ===== ログイン画面 ===== -->
+  <div class="login-title">
+    だれがログインしますか？
+  </div>
 
-  <!-- まよ -->
-  <div class="card" data-user="mayo">
-    <div class="avatar">
-      <img src="images/mayo.jpg" alt="まよ">
+  <div class="card-container">
+
+    <!-- まよ -->
+    <div class="card" data-user="mayo">
+      <div class="avatar">
+        <img src="images/mayo.jpg" alt="まよ">
+      </div>
+      <div class="card-name">まよ</div>
+      <div class="card-memo empty"
+           contenteditable="true"
+           data-placeholder="ひとことを書く"></div>
     </div>
-    <div class="card-name">まよ</div>
-    <div class="card-memo empty"
-         contenteditable="true"
-         data-placeholder="ひとことを書く">
+
+    <!-- ほのか -->
+    <div class="card" data-user="honoka">
+      <div class="avatar">
+        <img src="images/honoka.jpg" alt="ほのか">
+      </div>
+      <div class="card-name">ほのか</div>
+      <div class="card-memo empty"
+           contenteditable="true"
+           data-placeholder="ひとことを書く"></div>
+    </div>
+
+    <!-- りょう -->
+    <div class="card" data-user="ryo">
+      <div class="avatar">
+        <img src="images/ryo.jpg" alt="りょう">
+      </div>
+      <div class="card-name">りょう</div>
+      <div class="card-memo empty"
+           contenteditable="true"
+           data-placeholder="ひとことを書く"></div>
+    </div>
+
+    <!-- しゅん -->
+    <div class="card" data-user="shun">
+      <div class="avatar">
+        <img src="images/shun.jpg" alt="しゅん">
+      </div>
+      <div class="card-name">しゅん</div>
+      <div class="card-memo empty"
+           contenteditable="true"
+           data-placeholder="ひとことを書く"></div>
+    </div>
+
+    <!-- さとし -->
+    <div class="card" data-user="satoshi">
+      <div class="avatar">
+        <img src="images/satoshi.jpg" alt="さとし">
+      </div>
+      <div class="card-name">さとし</div>
+      <div class="card-memo empty"
+           contenteditable="true"
+           data-placeholder="ひとことを書く"></div>
+    </div>
+
+  </div>
+
+  <!-- ===== チャット画面 ===== -->
+  <div id="chat-view" style="display:none;">
+    <div class="chat-wrapper">
+      <div class="chat-header">
+        <span id="chat-username"></span>
+        <button id="logoutBtn">ログアウト</button>
+      </div>
+
+      <div class="messages"></div>
+
+      <div class="input-area">
+        <input type="text" placeholder="メッセージ">
+        <button>送信</button>
+      </div>
     </div>
   </div>
 
-  <!-- ほのか -->
-  <div class="card" data-user="honoka">
-    <div class="avatar">
-      <img src="images/honoka.jpg" alt="ほのか">
-    </div>
-    <div class="card-name">ほのか</div>
-    <div class="card-memo empty"
-         contenteditable="true"
-         data-placeholder="ひとことを書く">
-    </div>
-  </div>
+  <script src="login.js"></script>
 
-  <!-- りょう -->
-  <div class="card" data-user="ryo">
-    <div class="avatar">
-      <img src="images/ryo.jpg" alt="りょう">
-    </div>
-    <div class="card-name">りょう</div>
-    <div class="card-memo empty"
-         contenteditable="true"
-         data-placeholder="ひとことを書く">
-    </div>
-  </div>
-
-  <!-- しゅん -->
-  <div class="card" data-user="shun">
-    <div class="avatar">
-      <img src="images/shun.jpg" alt="しゅん">
-    </div>
-    <div class="card-name">しゅん</div>
-    <div class="card-memo empty"
-         contenteditable="true"
-         data-placeholder="ひとことを書く">
-    </div>
-  </div>
-
-  <!-- さとし -->
-  <div class="card" data-user="satoshi">
-    <div class="avatar">
-      <img src="images/satoshi.jpg" alt="さとし">
-    </div>
-    <div class="card-name">さとし</div>
-    <div class="card-memo empty"
-         contenteditable="true"
-         data-placeholder="ひとことを書く">
-    </div>
-  </div>
-
-</div>
 </body>
-
 </html>
