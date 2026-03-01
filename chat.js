@@ -1,23 +1,26 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
 
   const input = document.querySelector(".input-area input");
   const sendBtn = document.querySelector(".input-area button");
   const messages = document.querySelector(".messages");
+  const usernameEl = document.getElementById("chat-username");
 
-  if(!input || !sendBtn || !messages){
-    console.log("チャット要素が見つかりません");
-    return;
-  }
+  if (!input || !sendBtn || !messages) return;
 
-  function getTime(){
+  const db = firebase.database();
+  const chatRef = db.ref("messages");
+
+  const currentUser = localStorage.getItem("currentUser") || "unknown";
+
+  function getTime() {
     const now = new Date();
-    return now.getHours().toString().padStart(2,"0") + ":" +
-           now.getMinutes().toString().padStart(2,"0");
+    return now.getHours().toString().padStart(2, "0") + ":" +
+           now.getMinutes().toString().padStart(2, "0");
   }
 
-  function addMessage(text,type="me"){
-
+  function addMessageToUI(text, user, time) {
     const row = document.createElement("div");
+    const type = user === currentUser ? "me" : "other";
     row.className = "message-row " + type;
 
     const bubble = document.createElement("div");
@@ -27,31 +30,40 @@ document.addEventListener("DOMContentLoaded", function() {
     const meta = document.createElement("div");
     meta.className = "meta";
 
-    if(type === "me"){
-      meta.innerText = getTime() + " 既読1";
-    }else{
-      meta.innerText = getTime();
+    if (type === "me") {
+      meta.innerText = time + " 既読";
+    } else {
+      meta.innerText = time;
     }
 
     row.appendChild(bubble);
     row.appendChild(meta);
-
     messages.appendChild(row);
     messages.scrollTop = messages.scrollHeight;
   }
 
-  sendBtn.addEventListener("click", function(){
+  // 送信
+  sendBtn.addEventListener("click", function () {
     const text = input.value.trim();
-    if(text === "") return;
+    if (!text) return;
 
-    addMessage(text,"me");
+    chatRef.push({
+      text: text,
+      user: currentUser,
+      time: getTime()
+    });
+
     input.value = "";
   });
 
-  input.addEventListener("keydown", function(e){
-    if(e.key === "Enter"){
-      sendBtn.click();
-    }
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") sendBtn.click();
+  });
+
+  // 受信（リアルタイム）
+  chatRef.limitToLast(100).on("child_added", function (snapshot) {
+    const data = snapshot.val();
+    addMessageToUI(data.text, data.user, data.time);
   });
 
 });
