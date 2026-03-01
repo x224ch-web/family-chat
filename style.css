@@ -60,7 +60,9 @@ html, body {
 .avatar img{
   width:120px;
   height:120px;
-  border-radius:28px;
+
+  border-radius:44% 38% 42% 40% / 40% 44% 38% 42%;
+
   object-fit:cover;
   box-shadow:0 12px 30px rgba(0,0,0,0.6);
 }
