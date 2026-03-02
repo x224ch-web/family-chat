@@ -9,33 +9,58 @@ document.addEventListener("DOMContentLoaded", function () {
   const currentUser = localStorage.getItem("currentUser") || "unknown";
   const chatRef = firebase.database().ref("messages");
 
-  function addMessageToUI(text, user, time) {
+  function addMessageToUI(data, currentUser) {
 
-    const row = document.createElement("div");
-    const type = user === currentUser ? "me" : "other";
-    row.className = "message-row " + type;
+  const row = document.createElement("div");
+  row.classList.add("message-row");
 
-    if (type === "other") {
-      const name = document.createElement("div");
-      name.className = "sender-name";
-      name.innerText = user;
-      row.appendChild(name);
-    }
+  const bubble = document.createElement("div");
+  bubble.classList.add("bubble");
+  bubble.textContent = data.text;
 
-    const bubble = document.createElement("div");
-    bubble.className = "bubble";
-    bubble.innerText = text;
+  const time = document.createElement("div");
+  time.classList.add("time");
+  time.textContent = data.time;
+
+  if (data.user === currentUser) {
+
+    // ===== 自分 =====
+    row.classList.add("me");
 
     const meta = document.createElement("div");
-    meta.className = "meta";
-    meta.innerText = time;
+    meta.classList.add("meta-vertical");
 
-    row.appendChild(bubble);
+    const read = document.createElement("div");
+    read.textContent = "既読"; // 後で本物にする
+
+    meta.appendChild(read);
+    meta.appendChild(time);
+
     row.appendChild(meta);
+    row.appendChild(bubble);
 
-    messages.appendChild(row);
-    messages.scrollTop = messages.scrollHeight;
+  } else {
+
+    // ===== 他人 =====
+    row.classList.add("other");
+
+    const name = document.createElement("div");
+    name.classList.add("sender-name");
+    name.textContent = data.user;
+
+    const wrapper = document.createElement("div");
+    wrapper.style.display = "flex";
+    wrapper.style.flexDirection = "column";
+
+    wrapper.appendChild(name);
+    wrapper.appendChild(bubble);
+
+    row.appendChild(wrapper);
+    row.appendChild(time);
   }
+
+  document.querySelector(".messages").appendChild(row);
+}
 
   // 送信
   sendBtn.addEventListener("click", function () {
