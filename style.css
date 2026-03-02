@@ -160,3 +160,8 @@ html, body {
   margin:0 6px;
   white-space:nowrap;
 }
+.sender-name {
+  font-size: 12px;
+  opacity: 0.6;
+  margin-bottom: 4px;
+}
