@@ -20,7 +20,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const time = document.createElement("div");
   time.classList.add("time");
-  time.textContent = data.time;
+  const date = new Date(data.timestamp);
+const hh = String(date.getHours()).padStart(2, "0");
+const mm = String(date.getMinutes()).padStart(2, "0");
+time.textContent = hh + ":" + mm;
 
   if (data.user === currentUser) {
 
