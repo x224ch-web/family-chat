@@ -3,89 +3,74 @@ document.addEventListener("DOMContentLoaded", function () {
   const input = document.querySelector(".input-area input");
   const sendBtn = document.querySelector(".input-area button");
   const messages = document.querySelector(".messages");
-  const usernameEl = document.getElementById("chat-username");
 
   if (!input || !sendBtn || !messages) return;
 
-  const db = firebase.database();
-  const chatRef = db.ref("messages");
-
   const currentUser = localStorage.getItem("currentUser") || "unknown";
-
-  function getTime() {
-    const now = new Date();
-    return now.getHours().toString().padStart(2, "0") + ":" +
-           now.getMinutes().toString().padStart(2, "0");
-  }
+  const chatRef = firebase.database().ref("messages");
 
   function addMessageToUI(text, user, time) {
 
-  const row = document.createElement("div");
-  const type = user === currentUser ? "me" : "other";
-  row.className = "message-row " + type;
+    const row = document.createElement("div");
+    const type = user === currentUser ? "me" : "other";
+    row.className = "message-row " + type;
 
-  const contentWrapper = document.createElement("div");
-  contentWrapper.style.display = "flex";
-  contentWrapper.style.flexDirection = "column";
+    if (type === "other") {
+      const name = document.createElement("div");
+      name.className = "sender-name";
+      name.innerText = user;
+      row.appendChild(name);
+    }
 
-  // 他人の場合のみ名前表示
-  if (type === "other") {
-    const name = document.createElement("div");
-    name.className = "sender-name";
-    name.innerText = user;
-    contentWrapper.appendChild(name);
-  }
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    bubble.innerText = text;
 
-  const bubble = document.createElement("div");
-  bubble.className = "bubble";
-  bubble.innerText = text;
-
-  contentWrapper.appendChild(bubble);
-
-  const meta = document.createElement("div");
-  meta.className = "meta";
-
-  if (type === "me") {
-    meta.innerText = time + " 既読";
-  } else {
+    const meta = document.createElement("div");
+    meta.className = "meta";
     meta.innerText = time;
+
+    row.appendChild(bubble);
+    row.appendChild(meta);
+
+    messages.appendChild(row);
+    messages.scrollTop = messages.scrollHeight;
   }
-
-  row.appendChild(contentWrapper);
-  row.appendChild(meta);
-
-  messages.appendChild(row);
-  messages.scrollTop = messages.scrollHeight;
-}
 
   // 送信
   sendBtn.addEventListener("click", function () {
+
     const text = input.value.trim();
     if (!text) return;
 
     chatRef.push({
-  text: text,
-  name: currentUser,
-  timestamp: Date.now()
-});
+      text: text,
+      name: currentUser,
+      timestamp: Date.now()
+    });
 
     input.value = "";
   });
 
+  // Enter送信
   input.addEventListener("keydown", function (e) {
-    if (e.key === "Enter") sendBtn.click();
+    if (e.key === "Enter") {
+      sendBtn.click();
+    }
   });
 
-  // 受信（リアルタイム）
+  // 受信
   chatRef.limitToLast(100).on("child_added", function (snapshot) {
-  const data = snapshot.val();
 
-  const user = data.name;
-  const text = data.text;
-  const time = new Date(data.timestamp).toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit"
+    const data = snapshot.val();
+    if (!data) return;
+
+    const time = new Date(data.timestamp).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+
+    addMessageToUI(data.text, data.name, time);
   });
 
-  addMessageToUI(text, user, time);
 });
