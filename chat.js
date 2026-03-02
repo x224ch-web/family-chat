@@ -9,19 +9,20 @@ document.addEventListener("DOMContentLoaded", function () {
   const currentUser = localStorage.getItem("currentUser") || "unknown";
   const chatRef = firebase.database().ref("messages");
 
-  function addMessageToUI(data, currentUser) {
+ function addMessageToUI(text, user, time) {
 
   const row = document.createElement("div");
   row.classList.add("message-row");
 
   const bubble = document.createElement("div");
   bubble.classList.add("bubble");
-  bubble.textContent = data.text;
+  bubble.textContent = text;
 
-  const time = document.createElement("div");
-  time.classList.add("time");
+  const timeEl = document.createElement("div");
+  timeEl.classList.add("time");
+  timeEl.textContent = time;
 
-  if (data.user === currentUser) {
+  if (user === currentUser) {
 
     // ===== 自分 =====
     row.classList.add("me");
@@ -30,10 +31,10 @@ document.addEventListener("DOMContentLoaded", function () {
     meta.classList.add("meta-vertical");
 
     const read = document.createElement("div");
-    read.textContent = "既読"; // 後で本物にする
+    read.textContent = "既読";
 
     meta.appendChild(read);
-    meta.appendChild(time);
+    meta.appendChild(timeEl);
 
     row.appendChild(meta);
     row.appendChild(bubble);
@@ -43,22 +44,22 @@ document.addEventListener("DOMContentLoaded", function () {
     // ===== 他人 =====
     row.classList.add("other");
 
-    const name = document.createElement("div");
-    name.classList.add("sender-name");
-    name.textContent = data.user;
+    const nameEl = document.createElement("div");
+    nameEl.classList.add("sender-name");
+    nameEl.textContent = user;
 
     const wrapper = document.createElement("div");
     wrapper.style.display = "flex";
     wrapper.style.flexDirection = "column";
 
-    wrapper.appendChild(name);
+    wrapper.appendChild(nameEl);
     wrapper.appendChild(bubble);
 
     row.appendChild(wrapper);
-    row.appendChild(time);
+    row.appendChild(timeEl);
   }
 
-  document.querySelector(".messages").appendChild(row);
+  messages.appendChild(row);
 }
 
   // 送信
