@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (!input || !sendBtn || !messages) return;
 
-  const currentUser = localStorage.getItem("currentUser") || "username";
+  const currentUser = localStorage.getItem("username"); 
   const chatRef = firebase.database().ref("messages");
 
  function addMessageToUI(text, user, time) {
