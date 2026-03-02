@@ -114,14 +114,13 @@ html, body {
 /* 行 */
 .message-row{
   display:flex;
-  align-items:flex-end;   /* ← 吹き出し下揃え */
+  align-items:flex-end;
   max-width:80%;
 }
 
 /* 他人 */
 .message-row.other{
   align-self:flex-start;
-  flex-direction:row;
 }
 
 /* 自分 */
@@ -135,89 +134,46 @@ html, body {
   padding:12px 16px;
   border-radius:20px;
   font-size:15px;
+  line-height:1.4;
   word-break:break-word;
-  max-width:100%;
+  max-width:68%;
 }
 
 /* 他人バブル */
 .message-row.other .bubble{
-  background:#2a2a2a;
-  color:white;
+  background:#2c2c2e;
+  color:#fff;
   border-bottom-left-radius:6px;
 }
 
 /* 自分バブル */
 .message-row.me .bubble{
-  background:#1db954;
-  color:black;
+  background:#30d158;
+  color:#000;
   border-bottom-right-radius:6px;
 }
 
-/* 時刻 */
-.meta{
+/* 他人：名前（吹き出し左上） */
+.sender-name{
   font-size:11px;
-  opacity:.6;
-  margin:0 6px;
-  white-space:nowrap;
-}
-.sender-name {
-  font-size: 12px;
-  opacity: 0.6;
-  margin-bottom: 4px;
-}
-.message-row {
-  display: flex;
-  align-items: flex-end;
-  margin: 14px 0;
-}
-
-.message-row.other {
-  justify-content: flex-start;
-}
-
-.message-row.me {
-  justify-content: flex-end;
-}
-
-/* 吹き出し */
-.bubble {
-  max-width: 68%;
-  padding: 12px 16px;
-  border-radius: 20px;
-  font-size: 15px;
-  line-height: 1.4;
-}
-
-.other .bubble {
-  background: #2c2c2e;
-  color: #fff;
-}
-
-.me .bubble {
-  background: #30d158;
-  color: #000;
-}
-
-/* 他人：名前 */
-.sender-name {
-  font-size: 11px;
-  opacity: 0.6;
-  margin-bottom: 4px;
+  opacity:0.6;
+  margin-bottom:4px;
 }
 
 /* 時刻 */
-.time {
-  font-size: 11px;
-  opacity: 0.6;
-  white-space: nowrap;
+.time{
+  font-size:11px;
+  opacity:0.6;
+  white-space:nowrap;
+  margin:0 6px;
 }
 
-/* 自分のメタ縦並び */
-.meta-vertical {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  font-size: 11px;
-  opacity: 0.6;
-  margin-right: 6px;
+/* 自分のメタ縦並び（既読＋時刻） */
+.meta-vertical{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  font-size:11px;
+  opacity:0.6;
+  margin-right:6px;
 }
