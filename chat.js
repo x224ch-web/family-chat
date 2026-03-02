@@ -64,10 +64,10 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!text) return;
 
     chatRef.push({
-      text: text,
-      user: currentUser,
-      time: getTime()
-    });
+  text: text,
+  name: currentUser,
+  timestamp: Date.now()
+});
 
     input.value = "";
   });
@@ -78,8 +78,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // 受信（リアルタイム）
   chatRef.limitToLast(100).on("child_added", function (snapshot) {
-    const data = snapshot.val();
-    addMessageToUI(data.text, data.user, data.time);
+  const data = snapshot.val();
+
+  const user = data.name;
+  const text = data.text;
+  const time = new Date(data.timestamp).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit"
   });
 
+  addMessageToUI(text, user, time);
 });
