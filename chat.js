@@ -19,28 +19,44 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function addMessageToUI(text, user, time) {
-    const row = document.createElement("div");
-    const type = user === currentUser ? "me" : "other";
-    row.className = "message-row " + type;
 
-    const bubble = document.createElement("div");
-    bubble.className = "bubble";
-    bubble.innerText = text;
+  const row = document.createElement("div");
+  const type = user === currentUser ? "me" : "other";
+  row.className = "message-row " + type;
 
-    const meta = document.createElement("div");
-    meta.className = "meta";
+  const contentWrapper = document.createElement("div");
+  contentWrapper.style.display = "flex";
+  contentWrapper.style.flexDirection = "column";
 
-    if (type === "me") {
-      meta.innerText = time + " 既読";
-    } else {
-      meta.innerText = time;
-    }
-
-    row.appendChild(bubble);
-    row.appendChild(meta);
-    messages.appendChild(row);
-    messages.scrollTop = messages.scrollHeight;
+  // 他人の場合のみ名前表示
+  if (type === "other") {
+    const name = document.createElement("div");
+    name.className = "sender-name";
+    name.innerText = user;
+    contentWrapper.appendChild(name);
   }
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  bubble.innerText = text;
+
+  contentWrapper.appendChild(bubble);
+
+  const meta = document.createElement("div");
+  meta.className = "meta";
+
+  if (type === "me") {
+    meta.innerText = time + " 既読";
+  } else {
+    meta.innerText = time;
+  }
+
+  row.appendChild(contentWrapper);
+  row.appendChild(meta);
+
+  messages.appendChild(row);
+  messages.scrollTop = messages.scrollHeight;
+}
 
   // 送信
   sendBtn.addEventListener("click", function () {
