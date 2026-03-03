@@ -14,12 +14,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let currentUser = localStorage.getItem("currentUser");
 
-  // メッセージDOMを保持（再描画防止用）
   const messageMap = {};
 
-  /* =========================
-     ログイン処理
-  ========================= */
+  // ログイン
   cards.forEach(card => {
     card.addEventListener("click", function () {
 
@@ -36,9 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  /* =========================
-     リロード復元
-  ========================= */
+  // リロード復元
   if (currentUser) {
     cardContainer.style.display = "none";
     chatView.style.display = "block";
@@ -46,17 +41,13 @@ document.addEventListener("DOMContentLoaded", function () {
     loadMessages();
   }
 
-  /* =========================
-     ログアウト
-  ========================= */
+  // ログアウト
   logoutBtn.addEventListener("click", function () {
     localStorage.removeItem("currentUser");
     location.reload();
   });
 
-  /* =========================
-     メッセージUI生成
-  ========================= */
+  // UI生成
   function createMessageElement(key, text, user, time, readBy = {}) {
 
     const row = document.createElement("div");
@@ -111,9 +102,6 @@ document.addEventListener("DOMContentLoaded", function () {
     return row;
   }
 
-  /* =========================
-     既読表示更新
-  ========================= */
   function updateReadText(readElement, readBy) {
 
     if (!readBy) {
@@ -121,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    const readCount = Object.keys(readBy).length - 1; // 自分除外
+    const readCount = Object.keys(readBy).length - 1;
 
     if (readCount > 0) {
       readElement.textContent = "既読 " + readCount;
@@ -130,9 +118,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  /* =========================
-     送信
-  ========================= */
   function sendMessage() {
 
     const text = input.value.trim();
@@ -158,53 +143,23 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  /* =========================
-     Firebase読込
-  ========================= */
- function loadMessages() {
-
-  messages.innerHTML = "";
-  Object.keys(messageMap).forEach(key => delete messageMap[key]);
-
-  chatRef.off();
-
-  // 🔥 変更点：limitToLastを削除
-  chatRef.on("value", function(snapshot){
+  function loadMessages() {
 
     messages.innerHTML = "";
     Object.keys(messageMap).forEach(key => delete messageMap[key]);
 
-    snapshot.forEach(function(child){
+    chatRef.off();
 
-      const key = child.key;
-      const data = child.val();
-      if (!data) return;
+    chatRef.on("value", function(snapshot){
 
-      // 既読登録
-      if (!data.readBy || !data.readBy[currentUser]) {
-        chatRef.child(key).child("readBy").update({
-          [currentUser]: true
-        });
-      }
+      messages.innerHTML = "";
+      Object.keys(messageMap).forEach(key => delete messageMap[key]);
 
-      const time = new Date(data.timestamp).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit"
-      });
+      snapshot.forEach(function(child){
 
-      const element = createMessageElement(
-        key,
-        data.text,
-        data.name,
-        time,
-        data.readBy
-      );
+        const key = child.key;
+        const data = child.val();
+        if (!data) return;
 
-      messageMap[key] = element;
-      messages.appendChild(element);
-    });
-
-    messages.scrollTop = messages.scrollHeight;
-  });
-}
-});
+        if (!data.readBy || !data.readBy[currentUser]) {
+          chatRef.child(key
