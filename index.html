@@ -1,114 +1,58 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<link rel="manifest" href="manifest.json">
+  <!-- PWA用 -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.png">
 
-<link rel="apple-touch-icon" sizes="512x512" href="icon.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-
-<title>Family App</title>
-<link rel="stylesheet" href="style.css">
+  <title>Family Chat</title>
 </head>
+
 <body>
 
-<div class="login-title">
-  自分のカードを選んでchat roomへGO‼︎
-</div>
-
-<div class="card-container">
-
-  <!-- まよ -->
-  <div class="card" data-user="mayo">
-    <div class="avatar">
-      <img src="images/mayo.jpg" alt="まよ">
-    </div>
-    <div class="card-name">まよ</div>
-    <div class="card-memo empty" contenteditable="true"
-         data-placeholder="ひとことを書く"></div>
-  </div>
-
-  <!-- ほのか -->
-  <div class="card" data-user="honoka">
-    <div class="avatar">
-      <img src="images/honoka.jpg" alt="ほのか">
-    </div>
-    <div class="card-name">ほのか</div>
-    <div class="card-memo empty" contenteditable="true"
-         data-placeholder="ひとことを書く"></div>
-  </div>
-
-  <!-- りょう -->
-  <div class="card" data-user="ryo">
-    <div class="avatar">
-      <img src="images/ryo.jpg" alt="りょう">
-    </div>
-    <div class="card-name">りょう</div>
-    <div class="card-memo empty" contenteditable="true"
-         data-placeholder="ひとことを書く"></div>
-  </div>
-
-  <!-- しゅん -->
-  <div class="card" data-user="shun">
-    <div class="avatar">
-      <img src="images/shun.jpg" alt="しゅん">
-    </div>
-    <div class="card-name">しゅん</div>
-    <div class="card-memo empty" contenteditable="true"
-         data-placeholder="ひとことを書く"></div>
-  </div>
-
-  <!-- さとし -->
-  <div class="card" data-user="satoshi">
-    <div class="avatar">
-      <img src="images/satoshi.jpg" alt="さとし">
-    </div>
-    <div class="card-name">さとし</div>
-    <div class="card-memo empty" contenteditable="true"
-         data-placeholder="ひとことを書く"></div>
-  </div>
-
-</div>
-
-<div id="chat-view" style="display:none;">
-  <div class="chat-wrapper">
-    <div class="chat-header">
-      <span id="chat-username"></span>
-      <button id="logoutBtn">ログアウト</button>
-    </div>
-    <div class="messages"></div>
-    <div class="input-area">
-      <input type="text" placeholder="メッセージ">
-      <button>送信</button>
-    </div>
-  </div>
-</div>
+  <!-- あなたの画面HTMLはここにある想定 -->
 
 
-  <!-- Firebase CDN -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyC8qlv0imeiH6Vw_qu8295D_wno1xvEpKc",
-    authDomain: "x224ch-c937f.firebaseapp.com",
-    databaseURL: "https://x224ch-c937f-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "x224ch-c937f",
-    storageBucket: "x224ch-c937f.firebasestorage.app",
-    messagingSenderId: "217831065440",
-    appId: "1:217831065440:web:c15038f05ede6973448005"
-  };
+  <!-- ========================= -->
+  <!-- 🔥 Firebase compat SDK -->
+  <!-- ========================= -->
 
-  firebase.initializeApp(firebaseConfig);
-</script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
 
-<script src="login.js"></script>
-<script type="module" src="chat.js?v=4"></script>
 
-  
+  <!-- ========================= -->
+  <!-- 🔥 Firebase 初期化 -->
+  <!-- ========================= -->
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "あなたのapiKey",
+      authDomain: "あなたのauthDomain",
+      projectId: "あなたのprojectId",
+      storageBucket: "あなたのstorageBucket",
+      messagingSenderId: "あなたのmessagingSenderId",
+      appId: "あなたのappId"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+  </script>
+
+
+  <!-- ========================= -->
+  <!-- 🔥 あなたのJS -->
+  <!-- ========================= -->
+
+  <script src="login.js"></script>
+  <script src="chat.js?v=5"></script>
+
 </body>
 </html>
