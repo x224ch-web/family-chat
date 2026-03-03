@@ -202,23 +202,24 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // 🔥 既読更新リアルタイム
-    chatRef.limitToLast(100).on("child_changed", function (snapshot) {
+    chatRef.limitToLast(100).on("value", function(snapshot){
 
-      const data = snapshot.val();
-      if (!data) return;
+  snapshot.forEach(function(child){
 
-      const key = snapshot.key;
+    const key = child.key;
+    const data = child.val();
+    if (!data) return;
 
-      const element = messageMap[key];
-      if (!element) return;
+    const element = messageMap[key];
+    if (!element) return;
 
-      if (data.name === currentUser) {
-        const readEl = element.querySelector(".read-status");
-        if (readEl) {
-          updateReadText(readEl, data.readBy);
-        }
+    if (data.name === currentUser) {
+      const readEl = element.querySelector(".read-status");
+      if (readEl) {
+        updateReadText(readEl, data.readBy);
       }
-    });
-  }
+    }
+
+  });
 
 });
