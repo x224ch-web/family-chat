@@ -161,20 +161,24 @@ document.addEventListener("DOMContentLoaded", function () {
   /* =========================
      Firebase読込
   ========================= */
-  function loadMessages() {
+ function loadMessages() {
+
+  messages.innerHTML = "";
+  Object.keys(messageMap).forEach(key => delete messageMap[key]);
+
+  chatRef.off();
+
+  // 🔥 変更点：limitToLastを削除
+  chatRef.on("value", function(snapshot){
 
     messages.innerHTML = "";
-    messageMap.clear?.(); // 旧ブラウザ対策
+    Object.keys(messageMap).forEach(key => delete messageMap[key]);
 
-    chatRef.limitToLast(100).off();
+    snapshot.forEach(function(child){
 
-    // 追加
-    chatRef.limitToLast(100).on("child_added", function (snapshot) {
-
-      const data = snapshot.val();
+      const key = child.key;
+      const data = child.val();
       if (!data) return;
-
-      const key = snapshot.key;
 
       // 既読登録
       if (!data.readBy || !data.readBy[currentUser]) {
@@ -198,28 +202,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
       messageMap[key] = element;
       messages.appendChild(element);
-      messages.scrollTop = messages.scrollHeight;
     });
 
-    // 🔥 既読更新リアルタイム
-    chatRef.limitToLast(100).on("value", function(snapshot){
-
-  snapshot.forEach(function(child){
-
-    const key = child.key;
-    const data = child.val();
-    if (!data) return;
-
-    const element = messageMap[key];
-    if (!element) return;
-
-    if (data.name === currentUser) {
-      const readEl = element.querySelector(".read-status");
-      if (readEl) {
-        updateReadText(readEl, data.readBy);
-      }
-    }
-
+    messages.scrollTop = messages.scrollHeight;
   });
-
+}
 });
