@@ -1,37 +1,58 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-  // =========================
-  // 要素取得
-  // =========================
+  const cards = document.querySelectorAll(".card");
+  const cardContainer = document.querySelector(".card-container");
+  const chatView = document.getElementById("chat-view");
+  const usernameDisplay = document.getElementById("chat-username");
+  const logoutBtn = document.getElementById("logoutBtn");
+
   const input = document.querySelector(".input-area input");
   const sendBtn = document.querySelector(".input-area button");
   const messages = document.querySelector(".messages");
 
-  if (!input || !sendBtn || !messages) {
-    console.error("必要な要素が見つかりません");
-    return;
-  }
-
-  // =========================
-  // ユーザー取得（重要）
-  // =========================
-  const currentUser = localStorage.getItem("currentUser");
-
-  console.log("currentUser:", currentUser);
-
-  if (!currentUser) {
-    alert("ユーザー情報がありません。ログイン画面に戻ります。");
-    window.location.href = "index.html";
-    return;
-  }
-
-  // =========================
-  // Firebase参照
-  // =========================
   const chatRef = firebase.database().ref("messages");
 
+  let currentUser = localStorage.getItem("currentUser");
+
   // =========================
-  // UIに追加する関数
+  // ログイン処理
+  // =========================
+  cards.forEach(card => {
+    card.addEventListener("click", function () {
+
+      const user = card.dataset.user;
+      currentUser = user;
+
+      localStorage.setItem("currentUser", user);
+
+      cardContainer.style.display = "none";
+      chatView.style.display = "block";
+      usernameDisplay.textContent = user;
+
+      loadMessages();
+    });
+  });
+
+  // =========================
+  // ページ再読み込み時復元
+  // =========================
+  if (currentUser) {
+    cardContainer.style.display = "none";
+    chatView.style.display = "block";
+    usernameDisplay.textContent = currentUser;
+    loadMessages();
+  }
+
+  // =========================
+  // ログアウト
+  // =========================
+  logoutBtn.addEventListener("click", function () {
+    localStorage.removeItem("currentUser");
+    location.reload();
+  });
+
+  // =========================
+  // メッセージ表示
   // =========================
   function addMessageToUI(text, user, time) {
 
@@ -46,7 +67,6 @@ document.addEventListener("DOMContentLoaded", function () {
     timeEl.classList.add("time");
     timeEl.textContent = time;
 
-    // ===== 自分 =====
     if (user === currentUser) {
 
       row.classList.add("me");
@@ -65,7 +85,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     } else {
 
-      // ===== 他人 =====
       row.classList.add("other");
 
       const wrapper = document.createElement("div");
@@ -74,7 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const nameEl = document.createElement("div");
       nameEl.classList.add("sender-name");
-      nameEl.textContent = user || "unknown";
+      nameEl.textContent = user;
 
       wrapper.appendChild(nameEl);
       wrapper.appendChild(bubble);
@@ -84,18 +103,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     messages.appendChild(row);
-
-    // 自動スクロール
     messages.scrollTop = messages.scrollHeight;
   }
 
   // =========================
-  // 送信処理
+  // 送信
   // =========================
   function sendMessage() {
 
     const text = input.value.trim();
-    if (!text) return;
+    if (!text || !currentUser) return;
 
     chatRef.push({
       text: text,
@@ -115,19 +132,26 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // =========================
-  // 受信処理
+  // Firebase読込
   // =========================
-  chatRef.limitToLast(100).on("child_added", function (snapshot) {
+  function loadMessages() {
 
-    const data = snapshot.val();
-    if (!data) return;
+    messages.innerHTML = "";
 
-    const time = new Date(data.timestamp).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit"
+    chatRef.limitToLast(100).off();
+
+    chatRef.limitToLast(100).on("child_added", function (snapshot) {
+
+      const data = snapshot.val();
+      if (!data) return;
+
+      const time = new Date(data.timestamp).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+
+      addMessageToUI(data.text, data.name, time);
     });
-
-    addMessageToUI(data.text, data.name, time);
-  });
+  }
 
 });
