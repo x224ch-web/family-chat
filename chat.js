@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const chatRef = firebase.database().ref("messages");
 
   let currentUser = localStorage.getItem("currentUser");
-
   const messageMap = {};
 
   // ログイン
@@ -47,7 +46,6 @@ document.addEventListener("DOMContentLoaded", function () {
     location.reload();
   });
 
-  // UI生成
   function createMessageElement(key, text, user, time, readBy = {}) {
 
     const row = document.createElement("div");
@@ -111,11 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const readCount = Object.keys(readBy).length - 1;
 
-    if (readCount > 0) {
-      readElement.textContent = "既読 " + readCount;
-    } else {
-      readElement.textContent = "";
-    }
+    readElement.textContent = readCount > 0 ? "既読 " + readCount : "";
   }
 
   function sendMessage() {
@@ -162,4 +156,30 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!data) return;
 
         if (!data.readBy || !data.readBy[currentUser]) {
-          chatRef.child(key
+          chatRef.child(key).child("readBy").update({
+            [currentUser]: true
+          });
+        }
+
+        const time = new Date(data.timestamp).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+
+        const element = createMessageElement(
+          key,
+          data.text,
+          data.name,
+          time,
+          data.readBy
+        );
+
+        messageMap[key] = element;
+        messages.appendChild(element);
+      });
+
+      messages.scrollTop = messages.scrollHeight;
+    });
+  }
+
+});
