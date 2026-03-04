@@ -1,25 +1,35 @@
-importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js");
-importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js");
+const CACHE_NAME = "family-chat-v2";
 
-firebase.initializeApp({
-  apiKey: "AIzaSyC8qlv0imeiH6Vw_qu8295D_wno1xvEpKc",
-  authDomain: "x224ch-c937f.firebaseapp.com",
-  databaseURL: "https://x224ch-c937f-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "x224ch-c937f",
-  messagingSenderId: "217831065440",
-  appId: "1:217831065440:web:c15038f05ede6973448005"
+const urlsToCache = [
+
+"./",
+"./index.html",
+"./style.css",
+"./login.js",
+"./chat.js",
+"./icon-192.png",
+"./icon-512.png"
+
+];
+
+self.addEventListener("install", function(event){
+
+event.waitUntil(
+
+caches.open(CACHE_NAME)
+.then(cache => cache.addAll(urlsToCache))
+
+);
+
 });
 
-const messaging = firebase.messaging();
+self.addEventListener("fetch", function(event){
 
-messaging.onBackgroundMessage(function(payload) {
-  console.log("Background message received:", payload);
+event.respondWith(
 
-  self.registration.showNotification(
-    payload.notification.title,
-    {
-      body: payload.notification.body,
-      icon: "/icon.png"
-    }
-  );
+caches.match(event.request)
+.then(response => response || fetch(event.request))
+
+);
+
 });
