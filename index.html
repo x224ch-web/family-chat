@@ -9,11 +9,6 @@
 
 <meta name="theme-color" content="#000000">
 
-<!-- PWA -->
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -24,77 +19,165 @@
 
 <body>
 
+
+<!-- ログイン画面 -->
 <div id="login-view">
 
 <h1 class="login-title">Family Chat</h1>
 
 <div class="card-container">
 
+
 <div class="card" data-name="mayo">
-<div class="card-name">まよ</div>
-<div class="card-memo empty" contenteditable="true" data-placeholder="今日の一言"></div>
+
+<div class="avatar">
+<img src="images/mayo.jpg">
 </div>
+
+<div class="card-name">まよ</div>
+
+<div class="card-memo empty"
+contenteditable="true"
+data-placeholder="今日の一言"></div>
+
+</div>
+
 
 <div class="card" data-name="honoka">
-<div class="card-name">ほのか</div>
-<div class="card-memo empty" contenteditable="true" data-placeholder="今日の一言"></div>
+
+<div class="avatar">
+<img src="images/honoka.jpg">
 </div>
+
+<div class="card-name">ほのか</div>
+
+<div class="card-memo empty"
+contenteditable="true"
+data-placeholder="今日の一言"></div>
+
+</div>
+
 
 <div class="card" data-name="ryo">
-<div class="card-name">りょう</div>
-<div class="card-memo empty" contenteditable="true" data-placeholder="今日の一言"></div>
+
+<div class="avatar">
+<img src="images/ryo.jpg">
 </div>
+
+<div class="card-name">りょう</div>
+
+<div class="card-memo empty"
+contenteditable="true"
+data-placeholder="今日の一言"></div>
+
+</div>
+
 
 <div class="card" data-name="shun">
-<div class="card-name">しゅん</div>
-<div class="card-memo empty" contenteditable="true" data-placeholder="今日の一言"></div>
+
+<div class="avatar">
+<img src="images/shun.jpg">
 </div>
+
+<div class="card-name">しゅん</div>
+
+<div class="card-memo empty"
+contenteditable="true"
+data-placeholder="今日の一言"></div>
+
+</div>
+
 
 <div class="card" data-name="satoshi">
+
+<div class="avatar">
+<img src="images/satoshi.jpg">
+</div>
+
 <div class="card-name">さとし</div>
-<div class="card-memo empty" contenteditable="true" data-placeholder="今日の一言"></div>
+
+<div class="card-memo empty"
+contenteditable="true"
+data-placeholder="今日の一言"></div>
+
 </div>
+
 
 </div>
 </div>
 
 
-<div id="chat-view">
+
+<!-- チャット画面 -->
+
+<div id="chat-view" style="display:none;">
+
 
 <header>
+
 <span id="chat-username"></span>
+
 <button id="logoutBtn">ログアウト</button>
+
 </header>
+
 
 <div class="chat-wrapper">
 
+
 <div class="messages"></div>
 
+
 <div class="input-area">
-<input type="text" placeholder="メッセージ">
-<button id="sendBtn">送信</button>
+
+<input
+type="text"
+placeholder="メッセージ"
+autocomplete="off"
+/>
+
+<button id="sendBtn">
+送信
+</button>
+
+</div>
+
+
 </div>
 
 </div>
 
-</div>
 
-<audio id="notificationSound" src="639hz.mp3" preload="auto"></audio>
+<audio
+id="notificationSound"
+src="639hz_notification_optimized.mp3"
+preload="auto">
+</audio>
 
+
+
+<!-- Firebase -->
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
 
 <script>
 
 const firebaseConfig = {
 
 apiKey: "AIzaSyC8qlv0imeiH6Vw_qu8295D_wno1xvEpKc",
+
 authDomain: "x224ch-c937f.firebaseapp.com",
+
 databaseURL: "https://x224ch-c937f-default-rtdb.asia-southeast1.firebasedatabase.app",
+
 projectId: "x224ch-c937f",
+
 storageBucket: "x224ch-c937f.appspot.com",
+
 messagingSenderId: "217831065440",
+
 appId: "1:217831065440:web:c15038f05ede6973448005"
 
 };
@@ -103,16 +186,25 @@ firebase.initializeApp(firebaseConfig);
 
 </script>
 
+
 <script src="login.js"></script>
 <script src="chat.js"></script>
 
+
 <script>
+
 if ("serviceWorker" in navigator) {
+
 window.addEventListener("load", () => {
+
 navigator.serviceWorker.register("service-worker.js");
+
 });
+
 }
+
 </script>
+
 
 </body>
 </html>
