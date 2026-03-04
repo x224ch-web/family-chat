@@ -1,7 +1,12 @@
+document.addEventListener("DOMContentLoaded", function(){
+
 // ===== メモ管理 =====
 document.querySelectorAll(".card-memo").forEach(memo=>{
-  const user=memo.closest(".card").dataset.user;
-  const saved=localStorage.getItem("memo_"+user);
+  const card = memo.closest(".card");
+  if(!card) return;
+
+  const user = card.dataset.user;
+  const saved = localStorage.getItem("memo_"+user);
 
   if(saved){
     memo.innerText=saved;
@@ -33,42 +38,65 @@ document.querySelectorAll(".card-memo").forEach(memo=>{
 // ===== ログイン処理 =====
 document.querySelectorAll(".card").forEach(card=>{
   card.addEventListener("click",(e)=>{
+
     if(e.target.closest(".card-memo")) return;
 
     const user=card.dataset.user;
     localStorage.setItem("currentUser",user);
 
-    document.querySelector(".login-title").style.display="none";
-    document.querySelector(".card-container").style.display="none";
-    document.getElementById("chat-view").style.display="block";
-    document.getElementById("chat-username").innerText=user;
+    const title = document.querySelector(".login-title");
+    const container = document.querySelector(".card-container");
+    const chat = document.getElementById("chat-view");
+    const name = document.getElementById("chat-username");
+
+    if(title) title.style.display="none";
+    if(container) container.style.display="none";
+    if(chat) chat.style.display="block";
+    if(name) name.innerText=user;
+
   });
 });
 
 
-// ===== ログアウト（ここを修正） =====
-function attachLogoutEvent() {
-  const btn = document.getElementById("logoutBtn");
+// ===== ログアウト =====
+function attachLogoutEvent(){
+
+  const btn=document.getElementById("logoutBtn");
   if(!btn) return;
 
-  btn.onclick = function() {
+  btn.onclick=function(){
+
     localStorage.removeItem("currentUser");
 
-    document.getElementById("chat-view").style.display="none";
-    document.querySelector(".login-title").style.display="block";
-    document.querySelector(".card-container").style.display="flex";
+    const title = document.querySelector(".login-title");
+    const container = document.querySelector(".card-container");
+    const chat = document.getElementById("chat-view");
+
+    if(chat) chat.style.display="none";
+    if(title) title.style.display="block";
+    if(container) container.style.display="flex";
+
   };
 }
 
-// 初回実行
 attachLogoutEvent();
 
 
 // ===== 再読み込み対応 =====
 const savedUser=localStorage.getItem("currentUser");
+
 if(savedUser){
-  document.querySelector(".login-title").style.display="none";
-  document.querySelector(".card-container").style.display="none";
-  document.getElementById("chat-view").style.display="block";
-  document.getElementById("chat-username").innerText=savedUser;
+
+  const title = document.querySelector(".login-title");
+  const container = document.querySelector(".card-container");
+  const chat = document.getElementById("chat-view");
+  const name = document.getElementById("chat-username");
+
+  if(title) title.style.display="none";
+  if(container) container.style.display="none";
+  if(chat) chat.style.display="block";
+  if(name) name.innerText=savedUser;
+
 }
+
+});
