@@ -1,40 +1,59 @@
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded", () => {
 
-const user=localStorage.getItem("currentUser");
+const user = localStorage.getItem("currentUser");
 
-if(!user)return;
+const loginView = document.getElementById("login-view");
+const chatView = document.getElementById("chat-view");
 
-document.getElementById("login-view").style.display="none";
+const usernameLabel = document.getElementById("username");
 
-document.getElementById("chat-view").style.display="flex";
+const messages = document.querySelector(".messages");
+const input = document.querySelector(".input-area input");
+const sendBtn = document.querySelector(".input-area button");
 
-document.getElementById("username").innerText=user;
+const logoutBtn = document.getElementById("logout");
 
-const db=firebase.database().ref("messages");
+/* ===============================
+   Login check
+=============================== */
 
-const messages=document.querySelector(".messages");
+if(!user){
 
-const input=document.querySelector("input");
+loginView.style.display="flex";
+chatView.style.display="none";
+return;
 
-const btn=document.querySelector("button");
+}
 
-const sound=new Audio("639hz.mp3");
+loginView.style.display="none";
+chatView.style.display="flex";
 
-/* send */
+usernameLabel.innerText = user;
 
-btn.onclick=send;
 
-input.onkeypress=e=>{
+/* ===============================
+   Firebase
+=============================== */
 
-if(e.key==="Enter")send();
+const db = firebase.database().ref("messages");
 
-};
 
-function send(){
+/* ===============================
+   Notification sound
+=============================== */
 
-const text=input.value.trim();
+const sound = new Audio("639hz.mp3");
 
-if(!text)return;
+
+/* ===============================
+   Send message
+=============================== */
+
+function sendMessage(){
+
+const text = input.value.trim();
+
+if(!text) return;
 
 db.push({
 
@@ -48,39 +67,87 @@ input.value="";
 
 }
 
-/* receive */
+sendBtn.onclick = sendMessage;
 
-db.on("child_added",snap=>{
+input.addEventListener("keypress", e => {
 
-const m=snap.val();
+if(e.key === "Enter"){
 
-const div=document.createElement("div");
+sendMessage();
 
-div.className="message "+(m.user===user?"right":"left");
+}
 
-let html="";
+});
 
-if(m.user!==user){
 
-html+=`<div class="name">${m.user}</div>`;
+/* ===============================
+   Render message
+=============================== */
+
+function renderMessage(msg){
+
+if(!msg) return;
+if(!msg.user) return;
+if(!msg.text) return;
+
+const div = document.createElement("div");
+
+div.className = "message " + (msg.user === user ? "right" : "left");
+
+let html = "";
+
+if(msg.user !== user){
+
+html += `<div class="name">${msg.user}</div>`;
 
 sound.play().catch(()=>{});
 
 }
 
-html+=`<div class="bubble">${m.text}</div>`;
+html += `<div class="bubble">${msg.text}</div>`;
 
-div.innerHTML=html;
+div.innerHTML = html;
 
 messages.appendChild(div);
 
-messages.scrollTop=messages.scrollHeight;
+scrollBottom();
+
+}
+
+
+/* ===============================
+   Receive messages
+=============================== */
+
+db.on("child_added", snap => {
+
+const msg = snap.val();
+
+renderMessage(msg);
 
 });
 
-/* logout */
 
-document.getElementById("logout").onclick=()=>{
+/* ===============================
+   Auto scroll
+=============================== */
+
+function scrollBottom(){
+
+setTimeout(()=>{
+
+messages.scrollTop = messages.scrollHeight;
+
+},50);
+
+}
+
+
+/* ===============================
+   Logout
+=============================== */
+
+logoutBtn.onclick = () => {
 
 localStorage.removeItem("currentUser");
 
