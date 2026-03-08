@@ -1,4 +1,4 @@
-const CACHE_NAME = "family-chat-v6";
+const CACHE_NAME = "family-chat-v2";
 
 const urlsToCache = [
 
