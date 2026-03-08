@@ -1,54 +1,66 @@
-document.addEventListener("DOMContentLoaded", function(){
+document.addEventListener("DOMContentLoaded",()=>{
 
-const users = [
-  {name:"mayo", img:"images/mayo.jpg"},
-  {name:"honoka", img:"images/honoka.jpg"},
-  {name:"ryo", img:"images/ryo.jpg"},
-  {name:"shun", img:"images/shun.jpg"},
-  {name:"satoshi", img:"images/satoshi.jpg"}
-];
+const cards=document.querySelectorAll(".card");
 
-const container = document.querySelector(".card-container");
+const db=firebase.database();
 
-if(!container) return;
+cards.forEach(card=>{
 
-container.innerHTML="";
+const user=card.dataset.name;
 
-users.forEach(user => {
+const badge=card.querySelector(".unread");
 
-const card = document.createElement("div");
-card.className="card";
+/* unread */
 
-card.innerHTML = `
-<img src="${user.img}">
-<div class="card-name">${user.name}</div>
-<div class="card-memo" contenteditable="true"></div>
-`;
+db.ref("messages").on("value",snap=>{
 
-const memo = card.querySelector(".card-memo");
+let count=0;
 
-const saved = localStorage.getItem("memo_"+user.name);
+snap.forEach(m=>{
 
-if(saved){
-memo.innerText = saved;
-}
+if(m.val().user!==user) count++;
 
-memo.addEventListener("input",()=>{
-localStorage.setItem("memo_"+user.name,memo.innerText);
 });
 
-card.addEventListener("click",()=>{
+badge.style.display=count?"block":"none";
 
-localStorage.setItem("currentUser",user.name);
+badge.innerText=count;
 
-document.querySelector("#login-view").style.display="none";
-document.querySelector("#chat-view").style.display="flex";
+});
+
+/* login */
+
+card.onclick=()=>{
+
+localStorage.setItem("currentUser",user);
 
 location.reload();
 
+};
+
 });
 
-container.appendChild(card);
+/* memo */
+
+document.querySelectorAll(".card-memo").forEach(memo=>{
+
+const user=memo.closest(".card").dataset.name;
+
+const saved=localStorage.getItem("memo_"+user);
+
+if(saved){
+
+memo.innerText=saved;
+
+memo.classList.remove("empty");
+
+}
+
+memo.oninput=()=>{
+
+localStorage.setItem("memo_"+user,memo.innerText);
+
+};
 
 });
 
