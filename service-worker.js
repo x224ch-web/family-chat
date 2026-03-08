@@ -1,4 +1,4 @@
-const CACHE_NAME = "family-chat-v2";
+const CACHE_NAME = "family-chat-v3";
 
 const urlsToCache = [
 
@@ -12,7 +12,11 @@ const urlsToCache = [
 
 ];
 
-self.addEventListener("install", function(event){
+/* ===============================
+INSTALL
+=============================== */
+
+self.addEventListener("install", event => {
 
 event.waitUntil(
 
@@ -21,14 +25,58 @@ caches.open(CACHE_NAME)
 
 );
 
+self.skipWaiting();
+
 });
 
-self.addEventListener("fetch", function(event){
+
+/* ===============================
+ACTIVATE
+=============================== */
+
+self.addEventListener("activate", event => {
+
+event.waitUntil(
+
+caches.keys().then(cacheNames => {
+
+return Promise.all(
+
+cacheNames.map(cache => {
+
+if(cache !== CACHE_NAME){
+
+return caches.delete(cache);
+
+}
+
+})
+
+);
+
+})
+
+);
+
+self.clients.claim();
+
+});
+
+
+/* ===============================
+FETCH
+=============================== */
+
+self.addEventListener("fetch", event => {
 
 event.respondWith(
 
 caches.match(event.request)
-.then(response => response || fetch(event.request))
+.then(response => {
+
+return response || fetch(event.request);
+
+})
 
 );
 
