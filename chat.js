@@ -1,60 +1,46 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded",()=>{
 
-const input = document.querySelector(".input-area input");
-const sendBtn = document.querySelector(".input-area button");
-const messages = document.querySelector(".messages");
+const user=localStorage.getItem("currentUser");
 
-if (!input || !sendBtn || !messages) return;
+if(!user)return;
 
-const currentUser = localStorage.getItem("currentUser") || "unknown";
+document.getElementById("login-view").style.display="none";
 
-const chatRef = firebase.database().ref("messages");
+document.getElementById("chat-view").style.display="flex";
 
-const notificationSound = new Audio("639hz.mp3");
+document.getElementById("username").innerText=user;
 
+const db=firebase.database().ref("messages");
 
-/* ===============================
-   Time format
-=============================== */
+const messages=document.querySelector(".messages");
 
-function formatTime(ts){
+const input=document.querySelector("input");
 
-const d = new Date(ts);
+const btn=document.querySelector("button");
 
-const h = d.getHours().toString().padStart(2,'0');
-const m = d.getMinutes().toString().padStart(2,'0');
+const sound=new Audio("639hz.mp3");
 
-return h + ":" + m;
+/* send */
 
-}
+btn.onclick=send;
 
+input.onkeypress=e=>{
 
-/* ===============================
-   Auto scroll
-=============================== */
+if(e.key==="Enter")send();
 
-function scrollToBottom(){
+};
 
-messages.scrollTop = messages.scrollHeight;
+function send(){
 
-}
+const text=input.value.trim();
 
+if(!text)return;
 
-/* ===============================
-   Send message
-=============================== */
+db.push({
 
-function sendMessage(){
-
-const text = input.value.trim();
-
-if(text === "") return;
-
-chatRef.push({
-
-user: currentUser,
-text: text,
-time: Date.now()
+user:user,
+text:text,
+time:Date.now()
 
 });
 
@@ -62,77 +48,44 @@ input.value="";
 
 }
 
-sendBtn.addEventListener("click", sendMessage);
+/* receive */
 
-input.addEventListener("keypress", function(e){
+db.on("child_added",snap=>{
 
-if(e.key==="Enter"){
-sendMessage();
+const m=snap.val();
+
+const div=document.createElement("div");
+
+div.className="message "+(m.user===user?"right":"left");
+
+let html="";
+
+if(m.user!==user){
+
+html+=`<div class="name">${m.user}</div>`;
+
+sound.play().catch(()=>{});
+
 }
+
+html+=`<div class="bubble">${m.text}</div>`;
+
+div.innerHTML=html;
+
+messages.appendChild(div);
+
+messages.scrollTop=messages.scrollHeight;
 
 });
 
+/* logout */
 
-/* ===============================
-   Receive messages
-=============================== */
+document.getElementById("logout").onclick=()=>{
 
-chatRef.on("child_added", function(snapshot){
+localStorage.removeItem("currentUser");
 
-const msg = snapshot.val();
+location.reload();
 
-const messageDiv = document.createElement("div");
-
-if(msg.user === currentUser){
-
-messageDiv.className = "message right";
-
-}else{
-
-messageDiv.className = "message left";
-
-}
-
-
-/* ===============================
-   Build HTML
-=============================== */
-
-let html = "";
-
-if(msg.user !== currentUser){
-
-html += `<div class="name">${msg.user}</div>`;
-
-}
-
-html += `<div class="bubble">${msg.text}</div>`;
-
-html += `<div class="meta">${formatTime(msg.time)}</div>`;
-
-messageDiv.innerHTML = html;
-
-messages.appendChild(messageDiv);
-
-
-/* ===============================
-   Notification
-=============================== */
-
-if(msg.user !== currentUser){
-
-notificationSound.currentTime = 0;
-notificationSound.play();
-
-}
-
-
-/* ===============================
-   Auto scroll
-=============================== */
-
-scrollToBottom();
-
-});
+};
 
 });
