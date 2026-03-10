@@ -1,21 +1,69 @@
-self.addEventListener("install",e=>{
+const CACHE_NAME = "family-chat-v1";
 
-e.waitUntil(
+const urlsToCache = [
+  "./",
+  "./index.html",
+  "./style.css",
+  "./login.js",
+  "./chat.js",
+  "./manifest.json",
+  "./icon-192.png",
+  "./icon-512.png",
+  "./639hz.mp3"
+];
 
-caches.open("familychat").then(cache=>{
+self.addEventListener("install", event => {
 
-return cache.addAll([
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        return cache.addAll(urlsToCache);
+      })
+  );
 
-"/",
-"/index.html",
-"/style.css",
-"/login.js",
-"/chat.js"
+});
 
-]);
 
-})
+self.addEventListener("fetch", event => {
 
-);
+  event.respondWith(
+
+    caches.match(event.request)
+      .then(response => {
+
+        if (response) {
+          return response;
+        }
+
+        return fetch(event.request);
+
+      })
+
+  );
+
+});
+
+
+self.addEventListener("activate", event => {
+
+  const cacheWhitelist = [CACHE_NAME];
+
+  event.waitUntil(
+
+    caches.keys().then(cacheNames => {
+
+      return Promise.all(
+        cacheNames.map(cacheName => {
+
+          if (!cacheWhitelist.includes(cacheName)) {
+            return caches.delete(cacheName);
+          }
+
+        })
+      );
+
+    })
+
+  );
 
 });
