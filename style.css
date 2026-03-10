@@ -126,3 +126,90 @@ padding:10px;
 padding:10px;
 
 }
+/* ===============================
+   Login screen
+=============================== */
+
+#login-view{
+
+height:100dvh;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:flex-start;
+padding-top:80px;
+background:#000;
+
+}
+
+/* タイトル */
+
+#login-view h1{
+
+font-size:42px;
+font-weight:700;
+margin-bottom:60px;
+letter-spacing:1px;
+
+}
+
+/* カードグリッド */
+
+.cards{
+
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:40px;
+width:100%;
+max-width:360px;
+justify-items:center;
+
+}
+
+/* カード */
+
+.card{
+
+display:flex;
+flex-direction:column;
+align-items:center;
+cursor:pointer;
+transition:0.2s;
+
+}
+
+/* タップアニメ */
+
+.card:active{
+
+transform:scale(0.92);
+
+}
+
+/* アイコン */
+
+.card img{
+
+width:90px;
+height:90px;
+border-radius:50%;
+object-fit:cover;
+
+border:3px solid #2a2a2a;
+
+box-shadow:
+0 0 0 3px #000,
+0 4px 12px rgba(0,0,0,0.6);
+
+}
+
+/* 名前 */
+
+.card p{
+
+margin-top:12px;
+font-size:18px;
+color:#ddd;
+letter-spacing:0.5px;
+
+}
