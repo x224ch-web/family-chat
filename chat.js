@@ -205,6 +205,8 @@ db.on("child_added", snap=>{
 
 const msg = snap.val();
 
+if(!msg) return;
+
 const id = snap.key;
 
 renderMessage(msg,id);
