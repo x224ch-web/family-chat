@@ -4,7 +4,7 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Family Chat</title>
 
@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.json">
 
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#000">
+<meta name="apple-mobile-web-app-capable" content="yes">
 
 </head>
 
@@ -23,43 +23,33 @@
 
 <div id="login-view">
 
-<h1 class="login-title">Family Chat</h1>
+<h1>Family Chat</h1>
 
-<div class="card-container">
+<div class="cards">
 
-<div class="card" data-name="mayo">
-<div class="unread"></div>
-<div class="avatar"><img src="images/mayo.jpg"></div>
-<div class="card-name">まよ</div>
-<div class="card-memo empty" contenteditable="true" data-placeholder="今日の一言"></div>
+<div class="card" data-user="mayo">
+<img src="images/mayo.png">
+<p>mayo</p>
 </div>
 
-<div class="card" data-name="honoka">
-<div class="unread"></div>
-<div class="avatar"><img src="images/honoka.jpg"></div>
-<div class="card-name">ほのか</div>
-<div class="card-memo empty" contenteditable="true" data-placeholder="今日の一言"></div>
+<div class="card" data-user="honoka">
+<img src="images/honoka.png">
+<p>honoka</p>
 </div>
 
-<div class="card" data-name="ryo">
-<div class="unread"></div>
-<div class="avatar"><img src="images/ryo.jpg"></div>
-<div class="card-name">りょう</div>
-<div class="card-memo empty" contenteditable="true" data-placeholder="今日の一言"></div>
+<div class="card" data-user="ryo">
+<img src="images/ryo.png">
+<p>ryo</p>
 </div>
 
-<div class="card" data-name="shun">
-<div class="unread"></div>
-<div class="avatar"><img src="images/shun.jpg"></div>
-<div class="card-name">しゅん</div>
-<div class="card-memo empty" contenteditable="true" data-placeholder="今日の一言"></div>
+<div class="card" data-user="shun">
+<img src="images/shun.png">
+<p>shun</p>
 </div>
 
-<div class="card" data-name="satoshi">
-<div class="unread"></div>
-<div class="avatar"><img src="images/satoshi.jpg"></div>
-<div class="card-name">さとし</div>
-<div class="card-memo empty" contenteditable="true" data-placeholder="今日の一言"></div>
+<div class="card" data-user="satoshi">
+<img src="images/satoshi.png">
+<p>satoshi</p>
 </div>
 
 </div>
@@ -68,11 +58,11 @@
 
 <!-- CHAT -->
 
-<div id="chat-view" style="display:none">
+<div id="chat-view">
 
 <header>
 
-<div id="username"></div>
+<span id="username"></span>
 
 <button id="logout">logout</button>
 
@@ -82,9 +72,9 @@
 
 <div class="input-area">
 
-<input type="text" placeholder="メッセージ">
+<input placeholder="message">
 
-<button>送信</button>
+<button>send</button>
 
 </div>
 
@@ -93,6 +83,7 @@
 <!-- Firebase -->
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script>
@@ -112,7 +103,7 @@ firebase.initializeApp(firebaseConfig);
 </script>
 
 <script src="login.js"></script>
-  
+
 <script>
 if ("Notification" in window) {
   Notification.requestPermission();
@@ -121,15 +112,6 @@ if ("Notification" in window) {
   
 <script src="chat.js"></script>
 
-<script>
-
-if("serviceWorker" in navigator){
-
-navigator.serviceWorker.register("service-worker.js");
-
-}
-
-</script>
-
 </body>
+
 </html>
