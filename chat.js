@@ -13,6 +13,7 @@ const sendBtn = document.querySelector(".input-area button");
 
 const logoutBtn = document.getElementById("logout");
 
+
 /* ===============================
    Login check
 =============================== */
@@ -39,10 +40,28 @@ const db = firebase.database().ref("messages");
 
 
 /* ===============================
+   Notification permission
+=============================== */
+
+if ("Notification" in window) {
+
+Notification.requestPermission();
+
+}
+
+
+/* ===============================
    Notification sound
 =============================== */
 
 const sound = new Audio("639hz.mp3");
+
+
+/* ===============================
+   初回読み込みフラグ
+=============================== */
+
+let initialLoad = true;
 
 
 /* ===============================
@@ -100,8 +119,6 @@ if(msg.user !== user){
 
 html += `<div class="name">${msg.user}</div>`;
 
-sound.play().catch(()=>{});
-
 }
 
 html += `<div class="bubble">${msg.text}</div>`;
@@ -116,6 +133,28 @@ scrollBottom();
 
 
 /* ===============================
+   Push notification
+=============================== */
+
+function showNotification(msg){
+
+if (Notification.permission === "granted") {
+
+new Notification("Family Chat", {
+
+body: msg.user + " : " + msg.text,
+icon: "images/icon.png"
+
+});
+
+}
+
+sound.play().catch(()=>{});
+
+}
+
+
+/* ===============================
    Receive messages
 =============================== */
 
@@ -125,7 +164,30 @@ const msg = snap.val();
 
 renderMessage(msg);
 
+/* 初回読み込みでは通知しない */
+
+if(initialLoad) return;
+
+/* 自分のメッセージは通知しない */
+
+if(msg.user === user) return;
+
+/* 通知 */
+
+showNotification(msg);
+
 });
+
+
+/* ===============================
+   初回読み込み終了
+=============================== */
+
+setTimeout(()=>{
+
+initialLoad = false;
+
+},2000);
 
 
 /* ===============================
