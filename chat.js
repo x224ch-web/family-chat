@@ -45,7 +45,7 @@ const db = firebase.database().ref("messages");
 
 if ("Notification" in window) {
 
-Notification.requestPermission();
+Notification.requestPermission().catch(()=>{});
 
 }
 
@@ -58,7 +58,7 @@ const sound = new Audio("639hz.mp3");
 
 
 /* ===============================
-   初回読み込みフラグ
+   初回読み込み対策
 =============================== */
 
 let initialLoad = true;
@@ -140,12 +140,16 @@ function showNotification(msg){
 
 if (Notification.permission === "granted") {
 
+try{
+
 new Notification("Family Chat", {
 
 body: msg.user + " : " + msg.text,
 icon: "images/icon.png"
 
 });
+
+}catch(e){}
 
 }
 
@@ -164,7 +168,7 @@ const msg = snap.val();
 
 renderMessage(msg);
 
-/* 初回読み込みでは通知しない */
+/* 初回読み込みは通知しない */
 
 if(initialLoad) return;
 
@@ -187,7 +191,7 @@ setTimeout(()=>{
 
 initialLoad = false;
 
-},2000);
+},1500);
 
 
 /* ===============================
