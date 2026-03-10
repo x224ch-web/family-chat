@@ -13,9 +13,11 @@ const sendBtn = document.querySelector(".input-area button");
 
 const logoutBtn = document.getElementById("logout");
 
+const users = ["mayo","honoka","ryo","shun","satoshi"];
+
 
 /* ===============================
-   Login check
+Login
 =============================== */
 
 if(!user){
@@ -33,39 +35,27 @@ usernameLabel.innerText = user;
 
 
 /* ===============================
-   Firebase
+Firebase
 =============================== */
 
 const db = firebase.database().ref("messages");
 
 
 /* ===============================
-   Notification permission
+通知
 =============================== */
 
 if ("Notification" in window) {
-
 Notification.requestPermission().catch(()=>{});
-
 }
 
-
-/* ===============================
-   Notification sound
-=============================== */
-
 const sound = new Audio("639hz.mp3");
-
-
-/* ===============================
-   初回読み込み対策
-=============================== */
 
 let initialLoad = true;
 
 
 /* ===============================
-   Send message
+Send
 =============================== */
 
 function sendMessage(){
@@ -74,11 +64,20 @@ const text = input.value.trim();
 
 if(!text) return;
 
+let reads = {};
+
+users.forEach(u=>{
+
+reads[u] = (u === user);
+
+});
+
 db.push({
 
 user:user,
 text:text,
-time:Date.now()
+time:Date.now(),
+reads:reads
 
 });
 
@@ -88,32 +87,30 @@ input.value="";
 
 sendBtn.onclick = sendMessage;
 
-input.addEventListener("keypress", e => {
+input.addEventListener("keypress", e=>{
 
-if(e.key === "Enter"){
-
-sendMessage();
-
-}
+if(e.key==="Enter") sendMessage();
 
 });
 
 
 /* ===============================
-   Render message
+Render
 =============================== */
 
-function renderMessage(msg){
+function renderMessage(msg,id){
 
 if(!msg) return;
-if(!msg.user) return;
-if(!msg.text) return;
 
 const div = document.createElement("div");
 
-div.className = "message " + (msg.user === user ? "right" : "left");
+div.className = "message " + (msg.user === user ? "right":"left");
 
-let html = "";
+
+let html="";
+
+
+/* 名前 */
 
 if(msg.user !== user){
 
@@ -121,7 +118,36 @@ html += `<div class="name">${msg.user}</div>`;
 
 }
 
+
+/* 吹き出し */
+
 html += `<div class="bubble">${msg.text}</div>`;
+
+
+/* 時間 */
+
+const d = new Date(msg.time);
+
+const time = d.getHours()+":"+String(d.getMinutes()).padStart(2,"0");
+
+html += `<div class="meta">${time}</div>`;
+
+
+/* 既読 */
+
+if(msg.user === user){
+
+let readCount = 0;
+
+for(let u in msg.reads){
+
+if(msg.reads[u]) readCount++;
+
+}
+
+html += `<div class="read">既読 ${readCount}</div>`;
+
+}
 
 div.innerHTML = html;
 
@@ -133,23 +159,36 @@ scrollBottom();
 
 
 /* ===============================
-   Push notification
+既読更新
 =============================== */
 
-function showNotification(msg){
+function markAsRead(id,msg){
 
-if (Notification.permission === "granted") {
+if(!msg.reads) return;
 
-try{
+if(msg.reads[user]) return;
 
-new Notification("Family Chat", {
+firebase.database()
+.ref("messages/"+id+"/reads/"+user)
+.set(true);
 
-body: msg.user + " : " + msg.text,
-icon: "images/icon.png"
+}
+
+
+/* ===============================
+通知
+=============================== */
+
+function notify(msg){
+
+if(Notification.permission==="granted"){
+
+new Notification("Family Chat",{
+
+body:msg.user+" : "+msg.text,
+icon:"images/icon.png"
 
 });
-
-}catch(e){}
 
 }
 
@@ -159,43 +198,37 @@ sound.play().catch(()=>{});
 
 
 /* ===============================
-   Receive messages
+Receive
 =============================== */
 
-db.on("child_added", snap => {
+db.on("child_added", snap=>{
 
 const msg = snap.val();
 
-renderMessage(msg);
+const id = snap.key;
 
-/* 初回読み込みは通知しない */
+renderMessage(msg,id);
+
+markAsRead(id,msg);
 
 if(initialLoad) return;
 
-/* 自分のメッセージは通知しない */
-
 if(msg.user === user) return;
 
-/* 通知 */
-
-showNotification(msg);
+notify(msg);
 
 });
 
 
-/* ===============================
-   初回読み込み終了
-=============================== */
-
 setTimeout(()=>{
 
-initialLoad = false;
+initialLoad=false;
 
 },1500);
 
 
 /* ===============================
-   Auto scroll
+Scroll
 =============================== */
 
 function scrollBottom(){
@@ -210,10 +243,10 @@ messages.scrollTop = messages.scrollHeight;
 
 
 /* ===============================
-   Logout
+Logout
 =============================== */
 
-logoutBtn.onclick = () => {
+logoutBtn.onclick=()=>{
 
 localStorage.removeItem("currentUser");
 
