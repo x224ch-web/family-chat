@@ -1,29 +1,74 @@
-body{
+/* ===============================
+   base
+=============================== */
+
+*{
+box-sizing:border-box;
+}
+
+html,body{
 
 margin:0;
-font-family:sans-serif;
-background:#111;
-color:white;
+padding:0;
+background:#000;
+color:#fff;
+
+font-family:-apple-system,BlinkMacSystemFont,
+"Segoe UI",Roboto,"Helvetica Neue",Arial;
+
+height:100%;
+overflow:hidden;
 
 }
 
+
+/* ===============================
+   Login screen
+=============================== */
+
 #login-view{
+
+height:100dvh;
 
 display:flex;
 flex-direction:column;
 align-items:center;
-justify-content:center;
-height:100dvh;
+
+padding-top:60px;
 
 }
+
+
+/* title */
+
+#login-view h1{
+
+font-size:42px;
+font-weight:700;
+margin-bottom:50px;
+
+}
+
+
+/* card grid */
 
 .cards{
 
 display:grid;
+
 grid-template-columns:repeat(3,100px);
-gap:20px;
+
+justify-content:center;
+
+gap:30px;
+
+width:100%;
+max-width:360px;
 
 }
+
+
+/* card */
 
 .card{
 
@@ -32,46 +77,118 @@ cursor:pointer;
 
 }
 
+
+/* icon */
+
 .card img{
 
-width:80px;
-height:80px;
+width:90px;
+height:90px;
+
 border-radius:50%;
 
+object-fit:cover;
+
+border:3px solid #333;
+
+box-shadow:0 6px 18px rgba(0,0,0,0.6);
+
 }
+
+
+/* name */
+
+.card p{
+
+margin-top:10px;
+
+font-size:18px;
+
+color:#ddd;
+
+}
+
+
+/* ===============================
+   Chat screen
+=============================== */
 
 #chat-view{
 
-display:none;
-height:100dvh;
 display:flex;
+
 flex-direction:column;
 
+height:100dvh;
+
 }
+
+
+/* header */
 
 header{
 
 display:flex;
+
 justify-content:space-between;
-padding:10px;
+
+align-items:center;
+
+padding:12px 16px;
+
 background:#222;
 
+font-size:18px;
+
 }
+
+
+/* logout button */
+
+#logout{
+
+background:#eee;
+
+border:none;
+
+border-radius:20px;
+
+padding:6px 14px;
+
+font-size:14px;
+
+}
+
+
+/* ===============================
+   message area
+=============================== */
 
 .messages{
 
 flex:1;
+
 overflow-y:auto;
-padding:10px;
+
+padding:12px;
+
+padding-bottom:80px;
 
 }
+
+
+/* message */
 
 .message{
 
-margin:10px 0;
-max-width:70%;
+margin:6px 0;
+
+max-width:75%;
 
 }
+
+
+/* other user */
 
 .left{
 
@@ -79,20 +196,49 @@ text-align:left;
 
 }
 
+
+/* self */
+
 .right{
 
 margin-left:auto;
+
 text-align:right;
 
 }
 
-.bubble{
 
-padding:10px;
-border-radius:10px;
-display:inline-block;
+/* name */
+
+.name{
+
+font-size:12px;
+
+color:#aaa;
+
+margin-bottom:2px;
 
 }
+
+
+/* bubble */
+
+.bubble{
+
+display:inline-block;
+
+padding:10px 14px;
+
+border-radius:16px;
+
+font-size:16px;
+
+line-height:1.4;
+
+}
+
+
+/* other bubble */
 
 .left .bubble{
 
@@ -100,116 +246,113 @@ background:#333;
 
 }
 
+
+/* self bubble */
+
 .right .bubble{
 
 background:#4caf50;
 
+color:#fff;
+
 }
+
+
+/* time */
+
+.meta{
+
+font-size:11px;
+
+opacity:0.6;
+
+margin-top:2px;
+
+}
+
+
+/* read */
+
+.read{
+
+font-size:11px;
+
+opacity:0.6;
+
+}
+
+
+/* ===============================
+   input area
+=============================== */
 
 .input-area{
 
+position:fixed;
+
+bottom:0;
+
+left:0;
+
+right:0;
+
 display:flex;
+
+gap:6px;
+
 padding:10px;
+
 background:#222;
 
 }
 
+
+/* input */
+
 .input-area input{
 
 flex:1;
+
 padding:10px;
 
+border-radius:10px;
+
+border:none;
+
+font-size:16px;
+
 }
+
+
+/* button */
 
 .input-area button{
 
-padding:10px;
+padding:10px 16px;
+
+border-radius:10px;
+
+border:none;
+
+background:#4caf50;
+
+color:white;
+
+font-size:16px;
 
 }
+
+
 /* ===============================
-   Login screen
+   iPhone safe area
 =============================== */
 
-#login-view{
+@supports(padding:max(0px)){
 
-height:100dvh;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:flex-start;
-padding-top:80px;
-background:#000;
+.input-area{
+
+padding-bottom:max(10px,env(safe-area-inset-bottom));
 
 }
-
-/* タイトル */
-
-#login-view h1{
-
-font-size:42px;
-font-weight:700;
-margin-bottom:60px;
-letter-spacing:1px;
-
-}
-
-/* カードグリッド */
-
-.cards{
-
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:40px;
-width:100%;
-max-width:360px;
-justify-items:center;
-
-}
-
-/* カード */
-
-.card{
-
-display:flex;
-flex-direction:column;
-align-items:center;
-cursor:pointer;
-transition:0.2s;
-
-}
-
-/* タップアニメ */
-
-.card:active{
-
-transform:scale(0.92);
-
-}
-
-/* アイコン */
-
-.card img{
-
-width:90px;
-height:90px;
-border-radius:50%;
-object-fit:cover;
-
-border:3px solid #2a2a2a;
-
-box-shadow:
-0 0 0 3px #000,
-0 4px 12px rgba(0,0,0,0.6);
-
-}
-
-/* 名前 */
-
-.card p{
-
-margin-top:12px;
-font-size:18px;
-color:#ddd;
-letter-spacing:0.5px;
 
 }
