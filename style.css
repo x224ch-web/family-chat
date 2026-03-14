@@ -390,3 +390,26 @@ color:#aaa;
 margin:16px 0;
 
 }
+/* ===============================
+LINE message spacing
+=============================== */
+
+.message{
+
+margin:4px 0;
+
+max-width:70%;
+
+}
+
+.message.left{
+
+margin-left:0;
+
+}
+
+.message.right{
+
+margin-left:auto;
+
+}
