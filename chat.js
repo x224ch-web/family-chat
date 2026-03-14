@@ -1,19 +1,17 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded",()=>{
 
-const user = localStorage.getItem("currentUser");
+const user=localStorage.getItem("currentUser");
 
-const loginView = document.getElementById("login-view");
-const chatView = document.getElementById("chat-view");
+const loginView=document.getElementById("login-view");
+const chatView=document.getElementById("chat-view");
+const usernameLabel=document.getElementById("username");
 
-const usernameLabel = document.getElementById("username");
+const messages=document.querySelector(".messages");
+const input=document.querySelector(".input-area input");
+const sendBtn=document.querySelector(".input-area button");
+const logoutBtn=document.getElementById("logout");
 
-const messages = document.querySelector(".messages");
-const input = document.querySelector(".input-area input");
-const sendBtn = document.querySelector(".input-area button");
-
-const logoutBtn = document.getElementById("logout");
-
-const users = ["mayo","honoka","ryo","shun","satoshi"];
+const users=["mayo","honoka","ryo","shun","satoshi"];
 
 
 /* ===============================
@@ -21,37 +19,31 @@ Login
 =============================== */
 
 if(!user){
-
 loginView.style.display="flex";
 chatView.style.display="none";
 return;
-
 }
 
 loginView.style.display="none";
 chatView.style.display="flex";
-
-usernameLabel.innerText = user;
+usernameLabel.innerText=user;
 
 
 /* ===============================
 Firebase
 =============================== */
 
-const db = firebase.database().ref("messages");
+const db=firebase.database().ref("messages");
 
 
 /* ===============================
 通知
 =============================== */
 
-if ("Notification" in window) {
-Notification.requestPermission().catch(()=>{});
-}
+if("Notification" in window) Notification.requestPermission().catch(()=>{});
 
-const sound = new Audio("639hz.mp3");
-
-let initialLoad = true;
+const sound=new Audio("639hz.mp3");
+let initialLoad=true;
 
 
 /* ===============================
@@ -60,125 +52,99 @@ Send
 
 function sendMessage(){
 
-const text = input.value.trim();
-
+const text=input.value.trim();
 if(!text) return;
 
-let reads = {};
-
-users.forEach(u=>{
-
-reads[u] = (u === user);
-
-});
+let reads={};
+users.forEach(u=>reads[u]=(u===user));
 
 db.push({
-
 user:user,
 text:text,
 time:Date.now(),
 reads:reads
-
 });
 
 input.value="";
-
 }
 
-sendBtn.onclick = sendMessage;
+sendBtn.onclick=sendMessage;
 
-input.addEventListener("keypress", e=>{
-
+input.addEventListener("keydown",e=>{
 if(e.key==="Enter") sendMessage();
-
 });
 
 
-let lastUser = null;
-let lastDate = null;
+/* ===============================
+Render
+=============================== */
+
+let lastUser=null;
+let lastDate=null;
 
 function renderMessage(msg,id){
 
 if(!msg) return;
-const messageDate = new Date(msg.time).toDateString();
 
-if(messageDate !== lastDate){
+/* 日付区切り */
 
-const divider = document.createElement("div");
+const messageDate=new Date(msg.time).toDateString();
 
+if(messageDate!==lastDate){
+
+const divider=document.createElement("div");
 divider.className="date-divider";
-
-divider.innerText = new Date(msg.time).toLocaleDateString();
+divider.innerText=new Date(msg.time).toLocaleDateString();
 
 messages.appendChild(divider);
-
-lastDate = messageDate;
+lastDate=messageDate;
 
 }
-const div = document.createElement("div");
 
-div.className = "message " + (msg.user === user ? "right":"left");
+/* メッセージ */
 
+const div=document.createElement("div");
+div.className="message "+(msg.user===user?"right":"left");
 
 let html="";
 
-
 /* 名前 */
 
-if(msg.user !== user && msg.user !== lastUser){
-
-html += `<div class="name">${msg.user}</div>`;
-
+if(msg.user!==user && msg.user!==lastUser){
+html+=`<div class="name">${msg.user}</div>`;
 }
-
-
-/* 吹き出し */
-
-html += `
-<div class="bubble-row">
-
-<div class="bubble">${msg.text}</div>
-
-<div class="meta-block">
-<div class="read">既読 ${readCount}</div>
-<div class="meta">${time}</div>
-</div>
-
-</div>
-`;
-
 
 /* 時間 */
 
-const d = new Date(msg.time);
+const d=new Date(msg.time);
+const time=d.getHours()+":"+String(d.getMinutes()).padStart(2,"0");
 
-const time = d.getHours()+":"+String(d.getMinutes()).padStart(2,"0");
+/* 既読数 */
 
-html += `<div class="meta">${time}</div>`;
+let readCount=0;
 
-
-/* 既読 */
-
-if(msg.user === user){
-
-let readCount = 0;
-
+if(msg.reads){
 for(let u in msg.reads){
-
 if(msg.reads[u]) readCount++;
-
+}
 }
 
-html += `<div class="read">既読 ${readCount}</div>`;
+/* 吹き出し */
 
-}
+html+=`
+<div class="bubble-row">
+<div class="bubble">${msg.text}</div>
+<div class="meta-block">
+${msg.user===user?`<div class="read">既読 ${readCount}</div>`:""}
+<div class="meta">${time}</div>
+</div>
+</div>
+`;
 
-div.innerHTML = html;
-
+div.innerHTML=html;
 messages.appendChild(div);
 
-lastUser = msg.user;
-  
+lastUser=msg.user;
 scrollBottom();
 
 }
@@ -191,7 +157,6 @@ scrollBottom();
 function markAsRead(id,msg){
 
 if(!msg.reads) return;
-
 if(msg.reads[user]) return;
 
 firebase.database()
@@ -210,10 +175,8 @@ function notify(msg){
 if(Notification.permission==="granted"){
 
 new Notification("Family Chat",{
-
 body:msg.user+" : "+msg.text,
 icon:"images/icon.png"
-
 });
 
 }
@@ -227,32 +190,24 @@ sound.play().catch(()=>{});
 Receive
 =============================== */
 
-db.on("child_added", snap=>{
+db.on("child_added",snap=>{
 
-const msg = snap.val();
-
+const msg=snap.val();
 if(!msg) return;
 
-const id = snap.key;
+const id=snap.key;
 
 renderMessage(msg,id);
-
 markAsRead(id,msg);
 
 if(initialLoad) return;
-
-if(msg.user === user) return;
+if(msg.user===user) return;
 
 notify(msg);
 
 });
 
-
-setTimeout(()=>{
-
-initialLoad=false;
-
-},1500);
+setTimeout(()=>initialLoad=false,1500);
 
 
 /* ===============================
@@ -260,13 +215,7 @@ Scroll
 =============================== */
 
 function scrollBottom(){
-
-setTimeout(()=>{
-
-messages.scrollTop = messages.scrollHeight;
-
-},50);
-
+setTimeout(()=>{messages.scrollTop=messages.scrollHeight;},50);
 }
 
 
@@ -275,11 +224,8 @@ Logout
 =============================== */
 
 logoutBtn.onclick=()=>{
-
 localStorage.removeItem("currentUser");
-
 location.reload();
-
 };
 
 });
