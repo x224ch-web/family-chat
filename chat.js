@@ -132,17 +132,36 @@ if(msg.reads[u]) readCount++;
 }
 
 /* 吹き出し */
+if(msg.user===user){
 
 html+=`
 <div class="bubble-row">
-<div class="bubble">${msg.text}</div>
+
 <div class="meta-block">
-${msg.user===user?`<div class="read">既読 ${readCount}</div>`:""}
+<div class="read">既読 ${readCount}</div>
 <div class="meta">${time}</div>
 </div>
+
+<div class="bubble">${msg.text}</div>
+
 </div>
 `;
 
+}else{
+
+html+=`
+<div class="bubble-row">
+
+<div class="bubble">${msg.text}</div>
+
+<div class="meta-block">
+<div class="meta">${time}</div>
+</div>
+
+</div>
+`;
+
+}
 div.innerHTML=html;
 messages.appendChild(div);
 
