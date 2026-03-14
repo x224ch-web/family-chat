@@ -1,33 +1,28 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
 
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Family Chat</title>
 
 <link rel="stylesheet" href="style.css">
-
 <link rel="manifest" href="manifest.json">
 
 <meta name="theme-color" content="#000000">
-
 <meta name="mobile-web-app-capable" content="yes">
-
 <meta name="apple-mobile-web-app-capable" content="yes">
-
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <link rel="apple-touch-icon" href="icon-192.png">
 
 </head>
-
 <body>
 
-<!-- LOGIN -->
+<!-- ===============================
+LOGIN
+=============================== -->
 
 <div id="login-view">
 
@@ -36,7 +31,7 @@
 <div class="cards">
 
 <div class="card" data-user="mayo">
-<span class="badge" id="badge-mayo">0</span>
+<span class="badge" id="badge-mayo"></span>
 <img src="images/mayo.jpg">
 <p>mayo</p>
 </div>
@@ -66,75 +61,73 @@
 </div>
 
 </div>
-
 </div>
 
-<!-- CHAT -->
+
+<!-- ===============================
+CHAT
+=============================== -->
 
 <div id="chat-view">
 
 <header>
-
 <span id="username"></span>
-
 <button id="logout">logout</button>
-
 </header>
 
 <div class="messages"></div>
 
 <div class="input-area">
-
 <input placeholder="message">
-
 <button>send</button>
-
 </div>
 
 </div>
 
-<!-- Firebase -->
+
+<!-- ===============================
+Firebase
+=============================== -->
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyC8qlv0imeiH6Vw_qu8295D_wno1xvEpKc",
-  authDomain: "x224ch-c937f.firebaseapp.com",
-  databaseURL: "https://x224ch-c937f-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "x224ch-c937f",
-  storageBucket: "x224ch-c937f.firebasestorage.app",
-  messagingSenderId: "217831065440",
-  appId: "1:217831065440:web:c15038f05ede6973448005"
+const firebaseConfig={
+apiKey:"AIzaSyC8qlv0imeiH6Vw_qu8295D_wno1xvEpKc",
+authDomain:"x224ch-c937f.firebaseapp.com",
+databaseURL:"https://x224ch-c937f-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"x224ch-c937f",
+storageBucket:"x224ch-c937f.firebasestorage.app",
+messagingSenderId:"217831065440",
+appId:"1:217831065440:web:c15038f05ede6973448005"
 };
 
 firebase.initializeApp(firebaseConfig);
 
 </script>
 
+
+<!-- ===============================
+App Scripts
+=============================== -->
+
 <script src="login.js"></script>
-
-<script>
-if ("Notification" in window) {
-  Notification.requestPermission();
-}
-</script>
-  
 <script src="chat.js"></script>
+
+
+<!-- ===============================
+Service Worker
+=============================== -->
+
 <script>
-
-if ("serviceWorker" in navigator) {
-
-  navigator.serviceWorker
-    .register("./service-worker.js")
-    .then(() => console.log("SW registered"));
-
+if("serviceWorker" in navigator){
+navigator.serviceWorker
+.register("./service-worker.js")
+.then(()=>console.log("SW registered"));
 }
-
 </script>
-</body>
 
+</body>
 </html>
