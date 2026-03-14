@@ -98,6 +98,8 @@ divider.innerText=new Date(msg.time).toLocaleDateString();
 
 messages.appendChild(divider);
 lastDate=messageDate;
+/* 日付が変わったらユーザーリセット */
+lastUser=null;
 
 }
 
