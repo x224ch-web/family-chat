@@ -1,9 +1,10 @@
-import { initializeApp } 
+import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import { render as loginRender } from "./login.js";
+import { startUnreadListener } from "./listenerManager.js";
 
-// 🔹 Firebase 設定
+// ◆ Firebase 設定
 const firebaseConfig = {
   apiKey: "AIzaSyC8qlv0imeiH6Vw_qu8295D_wno1xvEpKc",
   authDomain: "x224ch-c937f.firebaseapp.com",
@@ -14,9 +15,11 @@ const firebaseConfig = {
   appId: "1:217831065440:web:c15038f05ede6973448005"
 };
 
-// ⭐ Firebase 初期化
+// ★ Firebase 初期化
 initializeApp(firebaseConfig);
 
-// ⭐ アプリ開始
+// ★ アプリ開始
 const app = document.getElementById("app");
 loginRender(app);
+
+startUnreadListener();
