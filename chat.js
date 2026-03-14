@@ -112,7 +112,7 @@ let html="";
 
 /* 名前 */
 
-if(msg.user !== user){
+if(msg.user !== user && msg.user !== lastUser){
 
 html += `<div class="name">${msg.user}</div>`;
 
