@@ -1,15 +1,13 @@
+/* ===============================
+   login
+=============================== */
+
 document.querySelectorAll(".card").forEach(card=>{
-
-card.onclick=()=>{
-
-const user=card.dataset.user;
-
-localStorage.setItem("currentUser",user);
-
-location.reload();
-
-};
-
+  card.addEventListener("click",()=>{
+    const user = card.dataset.user;
+    localStorage.setItem("currentUser", user);
+    location.reload();
+  });
 });
 
 
@@ -17,57 +15,31 @@ location.reload();
    unread badge
 =============================== */
 
-const users=["mayo","honoka","ryo","shun","satoshi"];
+const users = ["mayo","honoka","ryo","shun","satoshi"];
+const db = firebase.database().ref("messages");
 
-const db=firebase.database().ref("messages");
+db.on("value", snap => {
 
-db.on("value",snap=>{
+  const data = snap.val();
+  if(!data) return;
 
-const data=snap.val();
+  const unread = {};
+  users.forEach(u => unread[u] = 0);
 
-if(!data)return;
+  Object.values(data).forEach(msg=>{
+    users.forEach(u=>{
+      if(msg.user !== u && (!msg.reads || !msg.reads[u])){
+        unread[u]++;
+      }
+    });
+  });
 
-let unread={};
+  users.forEach(u=>{
+    const badge = document.getElementById("badge-"+u);
+    if(!badge) return;
 
-users.forEach(u=>unread[u]=0);
-
-Object.values(data).forEach(msg=>{
-
-users.forEach(u=>{
-
-if(msg.user!==u){
-
-if(!msg.reads || !msg.reads[u]){
-
-unread[u]++;
-
-}
-
-}
-
-});
-
-});
-
-
-users.forEach(u=>{
-
-const badge=document.getElementById("badge-"+u);
-
-if(!badge)return;
-
-if(unread[u]>0){
-
-badge.style.display="block";
-
-badge.innerText=unread[u];
-
-}else{
-
-badge.style.display="none";
-
-}
-
-});
+    badge.style.display = unread[u] ? "block" : "none";
+    badge.innerText = unread[u] || "";
+  });
 
 });
