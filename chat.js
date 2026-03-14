@@ -134,7 +134,18 @@ html += `<div class="name">${msg.user}</div>`;
 
 /* 吹き出し */
 
-html += `<div class="bubble">${msg.text}</div>`;
+html += `
+<div class="bubble-row">
+
+<div class="bubble">${msg.text}</div>
+
+<div class="meta-block">
+<div class="read">既読 ${readCount}</div>
+<div class="meta">${time}</div>
+</div>
+
+</div>
+`;
 
 
 /* 時間 */
