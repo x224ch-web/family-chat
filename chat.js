@@ -94,14 +94,27 @@ if(e.key==="Enter") sendMessage();
 });
 
 
-/* ===============================
-Render
-=============================== */
+let lastUser = null;
+let lastDate = null;
 
 function renderMessage(msg,id){
 
 if(!msg) return;
+const messageDate = new Date(msg.time).toDateString();
 
+if(messageDate !== lastDate){
+
+const divider = document.createElement("div");
+
+divider.className="date-divider";
+
+divider.innerText = new Date(msg.time).toLocaleDateString();
+
+messages.appendChild(divider);
+
+lastDate = messageDate;
+
+}
 const div = document.createElement("div");
 
 div.className = "message " + (msg.user === user ? "right":"left");
@@ -153,6 +166,8 @@ div.innerHTML = html;
 
 messages.appendChild(div);
 
+lastUser = msg.user;
+  
 scrollBottom();
 
 }
