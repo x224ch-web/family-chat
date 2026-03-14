@@ -116,15 +116,21 @@ padding-bottom:80px;
 }
 
 .message{
-margin:4px 0;
-max-width:70%;
+margin:6px 0;
+max-width:100%;
 }
 
 .left{text-align:left;}
+
 .right{
 margin-left:auto;
 text-align:right;
 }
+
+
+/* ===============================
+name
+=============================== */
 
 .name{
 font-size:12px;
@@ -132,15 +138,24 @@ color:#aaa;
 margin-bottom:2px;
 }
 
+
+/* ===============================
+bubble
+=============================== */
+
 .bubble{
 display:inline-block;
 padding:10px 14px;
 border-radius:16px;
 font-size:16px;
 line-height:1.4;
+max-width:65%;
+word-break:break-word;
 }
 
-.left .bubble{background:#333;}
+.left .bubble{
+background:#333;
+}
 
 .right .bubble{
 background:#4caf50;
@@ -159,9 +174,30 @@ gap:6px;
 max-width:100%;
 }
 
+.left .bubble-row{
+justify-content:flex-start;
+}
+
+.right .bubble-row{
+justify-content:flex-end;
+}
+
+
+/* ===============================
+meta (既読 + 時刻)
+=============================== */
+
 .meta-block{
+display:flex;
+flex-direction:column;
+justify-content:flex-end;
 font-size:11px;
 opacity:0.7;
+line-height:1.2;
+}
+
+.right .meta-block{
+align-items:flex-end;
 text-align:right;
 }
 
@@ -175,6 +211,11 @@ margin-top:2px;
 font-size:11px;
 opacity:0.6;
 }
+
+
+/* ===============================
+date divider
+=============================== */
 
 .date-divider{
 text-align:center;
